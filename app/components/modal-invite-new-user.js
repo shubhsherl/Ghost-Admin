@@ -10,6 +10,7 @@ const {Promise} = RSVP;
 export default ModalComponent.extend(ValidationEngine, {
     notifications: service(),
     store: service(),
+    rcUsers: service('rc-users'),
 
     classNames: 'modal-content invite-new-user',
 
@@ -46,6 +47,23 @@ export default ModalComponent.extend(ValidationEngine, {
             this.sendInvitation.perform();
         }
     },
+
+    // getRCUsers() {
+    //     let host = 'https://open.rocket.chat/';
+    //     let listDir = 'api/v1/users.list';
+    //     let authToken = 'AQlnaFgDczayLPngn-HdHABIomE2EjV_LMHAW0lvV1X';
+    //     let userId = 'AZG7dyTXMJoPhJHE7';
+
+    //     return this.ajax.request(host+listDir);
+    //     return this.ajax.request(host + listDir, {
+    //         type: 'get',
+    //         headers: {
+    //             'X-Auth-Token': authToken,
+    //             'X-User-Id': userId
+    //         },
+    //         contentType: 'application/json'
+    //     });
+    // },
 
     validate() {
         let email = this.email;
@@ -124,6 +142,33 @@ export default ModalComponent.extend(ValidationEngine, {
             // validation will reject and cause this to be called with no error
             if (error) {
                 invite.deleteRecord();
+                notifications.showAPIError(error, {key: 'invite.send'});
+                this.send('closeModal');
+            }
+        }
+    }).drop(),
+
+    sendInvitationn: task(function* () {
+        let notifications = this.notifications;
+        let rcUsers = this.rcUsers;
+
+        try {
+            rcUsers.importUsers();
+            // yield users.save();
+            // yield users = this.getRCUsers();
+            // If sending the invitation email fails, the API will still return a status of 201
+            // but the invite's status in the response object will be 'invited-pending'.
+            // if (invite.get('status') === 'pending') {
+            // notifications.showAlert(users, {type: 'error', key: 'invite.send.failed'});
+            // } else {
+            //     notifications.showNotification(notificationText, {key: 'invite.send.success'});
+            // }
+
+            this.send('closeModal');
+        } catch (error) {
+            // validation will reject and cause this to be called with no error
+            if (error) {
+                // invite.deleteRecord();
                 notifications.showAPIError(error, {key: 'invite.send'});
                 this.send('closeModal');
             }

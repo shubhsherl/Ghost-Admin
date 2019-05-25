@@ -1,5 +1,5 @@
 <header class="modal-header">
-    <h1>Invite a New User</h1>
+    <h1>Add Users</h1>
 </header>
 {{!-- disable mouseDown so it doesn't trigger focus-out validations --}}
 <a class="close" href="" title="Close" {{action "closeModal"}} {{action (optional noop) on="mouseDown"}}>
@@ -50,7 +50,7 @@
 </div>
 
 <div class="modal-footer">
-    {{gh-task-button "Send invitation now"
+    {{gh-task-button "Add User"
         successText="Sent"
         task=sendInvitation
         class="gh-btn gh-btn-green gh-btn-icon"
