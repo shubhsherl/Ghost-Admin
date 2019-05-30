@@ -190,6 +190,91 @@
             {{/gh-uploader}}
         </div>
 
+        <div class="gh-setting-header">User Permissions</div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Article Announcement</div>
+                <div class="gh-setting-desc">
+                    Allow the announcement of articles when publish.
+                </div>
+
+                {{#if settings.isAnnounced}}
+                    <div class="gh-setting-content-extended">
+                        {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="room"}}
+                        {{gh-text-input
+                            type="string"
+                            value=(readonly settings.room)
+                            input=(action (mut settings.room) value="target.value")
+                            focus-out=(action "validateFacebookUrl")
+                            data-test-room-input=true
+                        }}
+                        {{gh-error-message errors=settings.errors property="room"}}
+                        <p>Channel name for announcement</p>
+                    {{/gh-form-group}}
+                    </div>
+                {{/if}}
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-announced">
+                        <input
+                            type="checkbox"
+                            checked={{settings.isAnnounced}}
+                            id="settings-announced"
+                            onclick={{action "toggleIsAnnounced" value="target.checked"}}
+                            data-test-announced-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Authors Room for announcement</div>
+                <div class="gh-setting-desc">
+                    Allow authors to change the room for announcing their articles.
+                </div>
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-authors-rooms">
+                        <input
+                            type="checkbox"
+                            disabled={{not settings.isAnnounced}}
+                            checked={{settings.isAuthorsRooms}}
+                            id="settings-authors-rooms"
+                            onclick={{action "toggleIsAuthorsRooms" value="target.checked"}}
+                            data-test-authors-rooms-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Comments on Articles</div>
+                <div class="gh-setting-desc">
+                    Create a Discussion in RC on Articles when published, and show on footer.
+                </div>
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-comments">
+                        <input
+                            type="checkbox"
+                            checked={{settings.isComment}}
+                            id="settings-comments"
+                            onclick={{action "toggleIsComments" value="target.checked"}}
+                            data-test-comments-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <div class="gh-setting-header">Social accounts</div>
         <div class="gh-setting">
             <div class="gh-setting-content">

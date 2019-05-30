@@ -3,7 +3,7 @@ import SettingsMenuMixin from 'ghost-admin/mixins/settings-menu-component';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import formatMarkdown from 'ghost-admin/utils/format-markdown';
 import moment from 'moment';
-import {alias, or} from '@ember/object/computed';
+import {alias, or, not, and} from '@ember/object/computed';
 import {computed} from '@ember/object';
 import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
@@ -36,8 +36,14 @@ export default Component.extend(SettingsMenuMixin, {
     ogTitleScratch: alias('post.ogTitleScratch'),
     twitterDescriptionScratch: alias('post.twitterDescriptionScratch'),
     twitterTitleScratch: alias('post.twitterTitleScratch'),
+    roomNameScratch: alias('post.room_name'),
     slugValue: boundOneWay('post.slug'),
-
+    allowAnnouncements: boundOneWay('settings.isAnnounced'),
+    allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
+    isNotPublished: not('post.isPublished'),
+    
+    announce: and('allowAnnouncements', 'isNotPublished'),
+    roomName: or('roomNameScratch', 'settings.room'),
     facebookDescription: or('ogDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
     facebookImage: or('post.ogImage', 'post.featureImage'),
     facebookTitle: or('ogTitleScratch', 'seoTitle'),
@@ -161,6 +167,21 @@ export default Component.extend(SettingsMenuMixin, {
                 this.showError(error);
                 this.post.rollbackAttributes();
             });
+        },
+
+        toggleAnnounce() {
+            this.toggleProperty('announce');
+
+            // If this is a new post.  Don't save the post.  Defer the save
+            // to the user pressing the save button
+            // if (this.get('post.isNew')) {
+            //     return;
+            // }
+
+            // this.savePost.perform().catch((error) => {
+            //     this.showError(error);
+            //     this.post.rollbackAttributes();
+            // });
         },
 
         /**

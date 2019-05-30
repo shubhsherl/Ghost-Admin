@@ -44,6 +44,41 @@
                     </div>
                     {{gh-url-preview slug=slugValue tagName="p" classNames="description"}}
                 </div>
+                {{#if allowAnnouncements}}
+                <div class="form-group">
+                    <label for="announcement">{{capitalize post.displayName}} Announcement</label>
+                        {{gh-text-input
+                            class="post-setting-og-title"
+                            id="og-title"
+                            name="post-setting-og-title"
+                            readonly=(not allowAuthorRooms)
+                            placeholder=(truncate roomName 40)
+                            value=(readonly roomNameScratch)
+                            input=(action (mut roomNameScratch) value="target.value")
+                            focus-out=(action "setOgTitle" roomNameScratch)
+                            stopEnterKeyDownPropagation=true
+                            data-test-field="room-name"}}
+                        {{gh-error-message errors=post.errors property="roomName" data-test-error="room-name"}}
+                        {{#if allowAuthorRooms}}
+                        <p>Set Room Name to Announce</p>
+                        {{else}}
+                        <p>Cannot Change the Room Name</p>
+                        {{/if}}
+                    <div class="form-group for-checkbox">
+                        <label class="checkbox" for="announce" {{action "toggleAnnounce" bubbles="false"}}>
+                        <input
+                            type="checkbox"
+                            checked={{announce}}
+                            class="gh-input post-settings-announce"
+                            onclick={{action (mut announce) value="target.checked"}}
+                            data-test-checkbox="announce"
+                        >
+                        <span class="input-toggle-component"></span>
+                        <p>Announce this {{post.displayName}}</p>
+                        </label>
+                    </div>
+                </div>
+                {{/if}}
 
                 <div class="form-group">
                     {{#if (or post.isDraft post.isPublished post.pastScheduledTime)}}
@@ -100,6 +135,13 @@
                         <button type="button">
                             <b>Meta Data</b>
                             <span>Extra content for search engines</span>
+                        </button>
+                        {{svg-jar "arrow-right"}}
+                    </li>
+                    <li class="nav-list-item" {{action "showSubview" "announcement-data"}} data-test-button="announcement-data">
+                        <button type="button">
+                            <b>Announcement Card</b>
+                            <span>Customise structured data for Announcement message</span>
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
@@ -217,6 +259,77 @@
                                         <div class="seo-preview-description">{{truncate seoDescription 300}}</div>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
+                    {{/if}}
+
+                    {{#if (eq subview "announcement-data")}}
+                        <div class="settings-menu-header subview">
+                            <button {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">Back</span></button>
+                            <h4>Announcement Card</h4>
+                            <div style="width:23px;"></div>
+                        </div>
+
+                        <div class="settings-menu-content">
+
+                            <form {{action "discardEnter" on="submit"}}>
+                                {{gh-image-uploader-with-preview
+                                    image=post.twitterImage
+                                    text="Add Twitter image"
+                                    allowUnsplash=true
+                                    update=(action "setTwitterImage")
+                                    remove=(action "clearTwitterImage")
+                                }}
+                                {{#gh-form-group errors=post.errors hasValidated=post.hasValidated property="twitterTitle"}}
+                                    <label for="twitter-title">Message Title</label>
+                                    {{gh-text-input
+                                        class="post-setting-twitter-title"
+                                        id="twitter-title"
+                                        name="post-setting-twitter-title"
+                                        placeholder=(truncate twitterTitle 40)
+                                        value=(readonly twitterTitleScratch)
+                                        input=(action (mut twitterTitleScratch) value="target.value")
+                                        focus-out=(action "setTwitterTitle" twitterTitleScratch)
+                                        stopEnterKeyDownPropagation=true
+                                        data-test-field="twitter-title"}}
+                                    {{gh-error-message errors=post.errors property="twitterTitle" data-test-error="twitter-title"}}
+                                {{/gh-form-group}}
+
+                                {{#gh-form-group errors=post.errors hasValidated=post.hasValidated property="twitterDescription"}}
+                                    <label for="twitter-description">Message Description</label>
+                                    {{gh-textarea
+                                        class="post-setting-twitter-description"
+                                        id="twitter-description"
+                                        name="post-setting-twitter-description"
+                                        placeholder=(truncate twitterDescription 155)
+                                        stopEnterKeyDownPropagation="true"
+                                        value=(readonly twitterDescriptionScratch)
+                                        input=(action (mut twitterDescriptionScratch) value="target.value")
+                                        focus-out=(action "setTwitterDescription" twitterDescriptionScratch)
+                                        data-test-field="twitter-description"}}
+                                    {{gh-error-message errors=post.errors property="twitterDescription" data-test-error="twitter-description"}}
+                                {{/gh-form-group}}
+
+                                <div class="form-group">
+                                    <label>Preview</label>
+                                    <div class="gh-twitter-preview">
+                                        {{#if twitterImage}}
+                                        <div class="gh-twitter-preview-image" style={{background-image-style twitterImage}}></div>
+                                        {{/if}}
+                                        <div class="gh-twitter-preview-content">
+                                            <div class="gh-twitter-preview-title">{{twitterTitle}}</div>
+                                            <div class="gh-twitter-preview-description">{{truncate twitterDescription 155}}</div>
+                                            <div class="gh-twitter-preview-footer">
+                                                <div class="gh-twitter-preview-footer-left">
+                                                    {{config.blogDomain}}
+                                                </div>
+                                                <div class="gh-twitter-preview-footer-right">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </form>
                         </div>
                     {{/if}}

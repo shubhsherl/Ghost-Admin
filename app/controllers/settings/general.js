@@ -21,6 +21,7 @@ export default Controller.extend({
     session: service(),
     settings: service(),
     ui: service(),
+    rc_services: service('rc_services'),
 
     availableTimezones: null,
     iconExtensions: null,
@@ -28,6 +29,7 @@ export default Controller.extend({
     imageExtensions: IMAGE_EXTENSIONS,
     imageMimeTypes: IMAGE_MIME_TYPES,
 
+    _scratchRoom: null,
     _scratchFacebook: null,
     _scratchTwitter: null,
 
@@ -100,6 +102,29 @@ export default Controller.extend({
             } else if (changedAttrs.password) {
                 settings.set('password', changedAttrs.password[0]);
             }
+        },
+
+        toggleIsAnnounced(isAnnounced) {
+            let settings = this.settings;
+
+            settings.set('isAnnounced', isAnnounced);
+
+            // Change isAuthorsRooms to false when isAnnounce is disabled
+            if (!isAnnounced) {
+                settings.set('isAuthorsRooms', false);
+            } 
+        },
+
+        toggleIsAuthorsRooms(isAuthorsRooms) {
+            let settings = this.settings;
+
+            settings.set('isAuthorsRooms', isAuthorsRooms);
+        },
+
+        toggleIsComments(isComments) {
+            let settings = this.settings;
+
+            settings.set('isComments', isComments);
         },
 
         toggleLeaveSettingsModal(transition) {
@@ -196,6 +221,52 @@ export default Controller.extend({
                 this.get('settings.hasValidated').pushObject('facebook');
             }
         },
+
+        // validateRoom() {
+        //     let isAnnounced = this.get('settings.isAnnounced');
+        //     let newRoom = this._scratchRoom;
+        //     let oldRoom = this.get('settings.room');
+        //     let errMessage = '';
+
+        //     // reset errors and validation
+        //     this.get('settings.errors').remove('room');
+        //     this.get('settings.hasValidated').removeObject('room');
+
+        //     if (newRoom === '' && isAnnounced) {
+        //         // Allowed Announcement of articles but no room is specified.
+        //         errMessage = 'You must specify a Room to announce articles';
+        //             this.get('settings.errors').add('room', errMessage);
+        //             return;
+        //     }
+
+        //     // _scratchFacebook will be null unless the user has input something
+        //     if (!newRoom) {
+        //         newRoom = oldRoom;
+        //     }
+
+        //     try {
+        //         let isValidRoom = this.rc_services.checkRoom(newRoom);
+        //         this.notifications.showAlert(isValidRoom, {type: 'error'});
+
+        //         // this.get('settings.errors').add('room', isValidRoom);
+
+        //         // this.set('settings.room', '');
+        //         // run.schedule('afterRender', this, function () {
+        //         //     this.set('settings.room', newRoom);
+        //         // });
+        //     } catch (e) {
+        //         if (e === 'invalid url') {
+        //             errMessage = 'The URL must be in a format like '
+        //                        + 'https://www.facebook.com/yourPage';
+        //             this.get('settings.errors').add('facebook', errMessage);
+        //             return;
+        //         }
+
+        //         throw e;
+        //     } finally {
+        //         this.get('settings.hasValidated').pushObject('room');
+        //     }
+        // },
 
         validateTwitterUrl() {
             let newUrl = this._scratchTwitter;

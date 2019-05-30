@@ -10,7 +10,7 @@ const {Promise} = RSVP;
 export default ModalComponent.extend(ValidationEngine, {
     notifications: service(),
     store: service(),
-    rcUsers: service('rc-users'),
+    rcUsers: service('rc-services'),
 
     classNames: 'modal-content invite-new-user',
 
