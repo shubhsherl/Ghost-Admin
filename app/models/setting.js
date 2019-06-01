@@ -24,6 +24,7 @@ export default Model.extend(ValidationEngine, {
     isPrivate: attr('boolean'),
     isAuthorsRooms: attr('boolean'),
     isComments: attr('boolean'),
+    inviteOnly: attr('boolean'),
     publicHash: attr('string'),
     password: attr('string'),
     slack: attr('slack-settings'),

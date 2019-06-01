@@ -17,6 +17,8 @@ Router.map(function () {
     });
 
     this.route('signin');
+    // session_token
+    // this.route('signin', {path: '/signin/:token'});
     this.route('signout');
     this.route('signup', {path: '/signup/:token'});
     this.route('reset', {path: '/reset/:token'});

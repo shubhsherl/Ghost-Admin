@@ -23,7 +23,7 @@ export default Service.extend({
     checkRoom(room) {
         const base = this.ghostPaths.rcApi;
         const userId = 'AZG7dyTXMJoPhJHE7';
-        const authToken = 'AQlnaFgDczayLPngn-HdHABIomE2EjV_LMHAW0lvV1X';
+        const authToken = 'Snhsgh5Q_q6y-ZlhGaN9AIbzN8iGCZEzfLAXNU9Y29G';
         const options = {
             headers: {
                 'X-Auth-Token': authToken,

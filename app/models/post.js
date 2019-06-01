@@ -7,7 +7,7 @@ import moment from 'moment';
 import {belongsTo, hasMany} from 'ember-data/relationships';
 import {compare} from '@ember/utils';
 import {computed, observer} from '@ember/object';
-import {equal, filterBy} from '@ember/object/computed';
+import {equal, filterBy, or} from '@ember/object/computed';
 import {isBlank} from '@ember/utils';
 import {inject as service} from '@ember/service';
 
@@ -104,6 +104,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     updatedBy: attr('number'),
     url: attr('string'),
     uuid: attr('string'),
+    roomName: attr('string'),
+    toAnnounce: attr('boolean', {defaultValue: false}),
 
     authors: hasMany('user', {
         embedded: 'always',

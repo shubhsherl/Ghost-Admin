@@ -274,6 +274,28 @@
                 </div>
             </div>
         </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Only Owner, Admin can add users</div>
+                <div class="gh-setting-desc">
+                    If enabled, then only invited users can access.
+                </div>
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-invite-only">
+                        <input
+                            type="checkbox"
+                            checked={{settings.inviteOnly}}
+                            id="settings-invite-only"
+                            onclick={{action "toggleInviteOnly" value="target.checked"}}
+                            data-test-invite-only-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
 
         <div class="gh-setting-header">Social accounts</div>
         <div class="gh-setting">

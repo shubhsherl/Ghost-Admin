@@ -36,7 +36,7 @@ export default Component.extend(SettingsMenuMixin, {
     ogTitleScratch: alias('post.ogTitleScratch'),
     twitterDescriptionScratch: alias('post.twitterDescriptionScratch'),
     twitterTitleScratch: alias('post.twitterTitleScratch'),
-    roomNameScratch: alias('post.room_name'),
+    roomNameScratch: alias('post.roomName'),
     slugValue: boundOneWay('post.slug'),
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
@@ -102,6 +102,11 @@ export default Component.extend(SettingsMenuMixin, {
 
     didReceiveAttrs() {
         this._super(...arguments);
+
+        // To save default roomName to post roomName in case user dosen't
+        // change the room.
+        this.set('roomNameScratch', this.get('roomName'));
+        this.set('post.toAnnounce', this.get('announce'));
 
         // HACK: ugly method of working around the CSS animations so that we
         // can add throbbers only when the animation has finished
@@ -170,8 +175,10 @@ export default Component.extend(SettingsMenuMixin, {
         },
 
         toggleAnnounce() {
+            let post = this.post;
+            let announce = this.announce;
             this.toggleProperty('announce');
-
+            post.set('toAnnounce', !announce);
             // If this is a new post.  Don't save the post.  Defer the save
             // to the user pressing the save button
             // if (this.get('post.isNew')) {

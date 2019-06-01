@@ -127,6 +127,12 @@ export default Controller.extend({
             settings.set('isComments', isComments);
         },
 
+        toggleInviteOnly(inviteOnly) {
+            let settings = this.settings;
+
+            settings.set('inviteOnly', inviteOnly);
+        },
+
         toggleLeaveSettingsModal(transition) {
             let leaveTransition = this.leaveSettingsTransition;
 

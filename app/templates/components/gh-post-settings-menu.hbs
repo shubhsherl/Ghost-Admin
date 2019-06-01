@@ -48,14 +48,13 @@
                 <div class="form-group">
                     <label for="announcement">{{capitalize post.displayName}} Announcement</label>
                         {{gh-text-input
-                            class="post-setting-og-title"
+                            class="post-setting-og-room"
                             id="og-title"
-                            name="post-setting-og-title"
+                            name="post-setting-og-room"
                             readonly=(not allowAuthorRooms)
                             placeholder=(truncate roomName 40)
-                            value=(readonly roomNameScratch)
+                            value=(readonly roomName)
                             input=(action (mut roomNameScratch) value="target.value")
-                            focus-out=(action "setOgTitle" roomNameScratch)
                             stopEnterKeyDownPropagation=true
                             data-test-field="room-name"}}
                         {{gh-error-message errors=post.errors property="roomName" data-test-error="room-name"}}
