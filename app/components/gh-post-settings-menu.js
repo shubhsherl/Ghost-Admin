@@ -3,7 +3,7 @@ import SettingsMenuMixin from 'ghost-admin/mixins/settings-menu-component';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import formatMarkdown from 'ghost-admin/utils/format-markdown';
 import moment from 'moment';
-import {alias, or, not, and} from '@ember/object/computed';
+import {alias, and, not, or} from '@ember/object/computed';
 import {computed} from '@ember/object';
 import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
@@ -179,16 +179,6 @@ export default Component.extend(SettingsMenuMixin, {
             let announce = this.announce;
             this.toggleProperty('announce');
             post.set('toAnnounce', !announce);
-            // If this is a new post.  Don't save the post.  Defer the save
-            // to the user pressing the save button
-            // if (this.get('post.isNew')) {
-            //     return;
-            // }
-
-            // this.savePost.perform().catch((error) => {
-            //     this.showError(error);
-            //     this.post.rollbackAttributes();
-            // });
         },
 
         /**

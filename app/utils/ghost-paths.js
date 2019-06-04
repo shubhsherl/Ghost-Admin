@@ -19,7 +19,6 @@ export default function () {
     let adminRoot = `${subdir}/ghost/`;
     let assetRoot = `${subdir}/ghost/assets/`;
     let apiRoot = `${subdir}/ghost/api/v2/admin`;
-    let rcApi = 'https://open.rocket.chat/api/v1/';
 
     function assetUrl(src) {
         return subdir + src;
@@ -32,7 +31,6 @@ export default function () {
         subdir,
         blogRoot: `${subdir}/`,
         count: 'https://count.ghost.org/',
-        rcApi,
 
         url: {
             admin() {

@@ -8,25 +8,24 @@
 
 <div class="modal-body">
     <fieldset>
-        {{#gh-form-group errors=errors hasValidated=hasValidated property="email"}}
-            <label for="new-user-email">Email Address</label>
+        {{#gh-form-group errors=errors hasValidated=hasValidated property="username"}}
+            <label for="new-user-name">Username</label>
             {{gh-text-input
-                class="email"
-                id="new-user-email"
-                type="email"
-                placeholder="Email Address"
-                name="email"
+                class="username"
+                id="new-user-name"
+                placeholder="Username"
+                name="username"
                 autofocus="autofocus"
                 autocapitalize="off"
                 autocorrect="off"
-                value=(readonly email)
-                input=(action (mut email) value="target.value")
+                value=(readonly username)
+                input=(action (mut username) value="target.value")
                 keyEvents=(hash
                     Enter=(action "confirm")
                 )
-                focus-out=(action "validate" "email")
+                focus-out=(action "validate" "username")
             }}
-            {{gh-error-message errors=errors property="email"}}
+            {{gh-error-message errors=errors property="username"}}
         {{/gh-form-group}}
 
 

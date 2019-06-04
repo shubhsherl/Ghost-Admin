@@ -41,7 +41,6 @@ export default Route.extend(UnauthenticatedRouteMixin, {
             }
 
             tokenText = atob(params.token);
-            this.notifications.showAlert(params.token, {type: 'error', delayed: true, key: 'signup.create.invalid-token'});
             email = tokenText.split('|')[1];
 
             // leave e-mail blank even though we get it from the token because

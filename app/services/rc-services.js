@@ -1,4 +1,4 @@
-import Service, { inject as service } from '@ember/service';
+import Service, {inject as service} from '@ember/service';
 
 export default Service.extend({
     ajax: service(),
@@ -8,35 +8,25 @@ export default Service.extend({
         this._super(...arguments);
     },
 
-    importUsers() {
-        const base = this.ghostPaths.rcApi;
-        const query = {
-            invites: [{
-                role: 'author',
-                apiUrl: base+'users.list'
-            }]
-        };
-        // this.notifications.showAlert('yo', {type: 'error', key: 'invite.send'});
-        return this.ajax.post('/ghost/api/v2/admin/invites', { data: query });
+    getUser(username) {
+        const query = {name: username};
+        let url = this.get('ghostPaths.url').api('rcapi');
+        return this.ajax.request(url, {data: query})
+            .then((u) => {
+                return u;
+            });
     },
 
-    checkRoom(room) {
-        const base = this.ghostPaths.rcApi;
-        const userId = 'AZG7dyTXMJoPhJHE7';
-        const authToken = 'Snhsgh5Q_q6y-ZlhGaN9AIbzN8iGCZEzfLAXNU9Y29G';
-        const options = {
-            headers: {
-                'X-Auth-Token': authToken,
-                'X-User-Id': userId,
-                'Content-Type': 'application/json'
-                // 'Access-Control-Allow-Origin': '*',
-                // "accept": "application/json"
-            },
-            // crossDomain: true,
-            // method: "GET",
-            dataType: 'jsonp',
-            beforeSend: function(xhr, settings) { xhr.setRequestHeader('X-Auth-Token',authToken);xhr.setRequestHeader('X-User-Id',userId); }
-        };
-        return this.ajax.request(base + 'channels.list?query={"name":"'+room+'"}&fields={"_id":1,"name":1}', options);
+    addUser(username, role) {
+        let authUrl = this.get('ghostPaths.url').api('authentication', 'adduser');
+        return this.ajax.post(authUrl, {
+            dataType: 'json',
+            data: {
+                user: [{
+                    rc_username: username,
+                    role: role
+                }]
+            }
+        });
     }
 });

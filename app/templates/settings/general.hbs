@@ -190,7 +190,30 @@
             {{/gh-uploader}}
         </div>
 
-        <div class="gh-setting-header">User Permissions</div>
+        <div class="gh-setting-header">Rocket-Chat</div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Rocket.Chat server Url</div>
+                <div class="gh-setting-desc">Set the url where rocket chat server is running</div>
+                {{#liquid-if chatServerUrl}}
+                <div class="gh-setting-content-extended">
+                    {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="serverUrl"}}
+                        {{gh-text-input
+                            value=(readonly settings.serverUrl)
+                            input=(action (mut settings.serverUrl) value="target.value")
+                            focus-out=(action "validate" target=settings)
+                            data-test-server-url-input=true
+                        }}
+                        {{gh-error-message errors=settings.errors property="serverUrl"}}
+                        <p>All the api call will use this url. Verify it before changing.</p>
+                    {{/gh-form-group}}
+                </div>
+                {{/liquid-if}}
+            </div>
+            <div class="gh-setting-action">
+                <button type="button" class="gh-btn gh-btn-hover-blue" {{action (toggle "chatServerUrl" this)}} data-test-toggle-server-url><span>{{if chatServerUrl "Close" "Expand"}}</span></button>
+            </div>
+        </div>
         <div class="gh-setting">
             <div class="gh-setting-content">
                 <div class="gh-setting-title">Article Announcement</div>
@@ -202,10 +225,8 @@
                     <div class="gh-setting-content-extended">
                         {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="room"}}
                         {{gh-text-input
-                            type="string"
                             value=(readonly settings.room)
                             input=(action (mut settings.room) value="target.value")
-                            focus-out=(action "validateFacebookUrl")
                             data-test-room-input=true
                         }}
                         {{gh-error-message errors=settings.errors property="room"}}

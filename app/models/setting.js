@@ -20,6 +20,7 @@ export default Model.extend(ValidationEngine, {
     room: attr('string'),
     labs: attr('string'),
     navigation: attr('navigation-settings'),
+    serverUrl: attr('string'),
     isAnnounced: attr('boolean'),
     isPrivate: attr('boolean'),
     isAuthorsRooms: attr('boolean'),
