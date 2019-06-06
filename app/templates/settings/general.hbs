@@ -226,10 +226,11 @@
                         {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="room"}}
                         {{gh-text-input
                             value=(readonly settings.room)
-                            input=(action (mut settings.room) value="target.value")
+                            input=(action (mut _scratchRoom) value="target.value")
+                            focus-out=(action "validateRoom")
                             data-test-room-input=true
                         }}
-                        {{gh-error-message errors=settings.errors property="room"}}
+                        {{gh-error-message errors=settings.errors property="room" data-test-room-error=true}}
                         <p>Channel name for announcement</p>
                     {{/gh-form-group}}
                     </div>

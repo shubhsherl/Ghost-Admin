@@ -8,13 +8,16 @@ export default Service.extend({
         this._super(...arguments);
     },
 
-    getUser(username) {
-        const query = {name: username};
+    getRoom(room) {
+        const query = {rname: room};
         let url = this.get('ghostPaths.url').api('rcapi');
-        return this.ajax.request(url, {data: query})
-            .then((u) => {
-                return u;
-            });
+        return this.ajax.request(url, {data: query});
+    },
+
+    getUser(username) {
+        const query = {uname: username};
+        let url = this.get('ghostPaths.url').api('rcapi');
+        return this.ajax.request(url, {data: query});
     },
 
     addUser(username, role) {

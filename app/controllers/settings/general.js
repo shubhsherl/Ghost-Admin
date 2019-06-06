@@ -21,7 +21,7 @@ export default Controller.extend({
     session: service(),
     settings: service(),
     ui: service(),
-    rc_services: service('rc_services'),
+    rcServices: service('rc_services'),
 
     availableTimezones: null,
     iconExtensions: null,
@@ -36,6 +36,7 @@ export default Controller.extend({
     init() {
         this._super(...arguments);
         this.iconExtensions = ICON_EXTENSIONS;
+        this._scratchRoom = this.get('settings.room');
     },
 
     privateRSSUrl: computed('config.blogUrl', 'settings.publicHash', function () {
@@ -98,7 +99,7 @@ export default Controller.extend({
             if (isPrivate && changedAttrs.isPrivate) {
                 settings.set('password', randomPassword());
 
-            // reset the password when isPrivate is disabled
+                // reset the password when isPrivate is disabled
             } else if (changedAttrs.password) {
                 settings.set('password', changedAttrs.password[0]);
             }
@@ -172,6 +173,41 @@ export default Controller.extend({
             return transition.retry();
         },
 
+        validateRoom() {
+            let newRoom = this._scratchRoom;
+            let oldRoom = this.get('settings.room');
+            let errMessage = 'Room does not exist';
+            
+            // reset errors and validation
+            this.get('settings.errors').remove('room');
+            this.get('settings.hasValidated').removeObject('room');
+
+            if (!newRoom) {
+                newRoom = oldRoom;
+            }
+            this.rcServices.getRoom(newRoom)
+                .then((room) => {
+                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
+
+                    if (!existingRCRoom) {
+                        throw errMessage;
+                    }
+                    run.schedule('afterRender', this, function () {
+                        this.set('settings.room', newRoom);
+                    });
+                })
+                .catch((e) => {
+                    if (e === errMessage){
+                        this.get('settings.errors').add('room', errMessage);
+                        return;
+                    }
+                    throw e;
+                })
+                .finally(() => {
+                    this.get('settings.hasValidated').pushObject('room');
+                });
+        },
+
         validateFacebookUrl() {
             let newUrl = this._scratchFacebook;
             let oldUrl = this.get('settings.facebook');
@@ -217,7 +253,7 @@ export default Controller.extend({
             } catch (e) {
                 if (e === 'invalid url') {
                     errMessage = 'The URL must be in a format like '
-                               + 'https://www.facebook.com/yourPage';
+                        + 'https://www.facebook.com/yourPage';
                     this.get('settings.errors').add('facebook', errMessage);
                     return;
                 }
@@ -276,7 +312,7 @@ export default Controller.extend({
                 });
             } else {
                 errMessage = 'The URL must be in a format like '
-                           + 'https://twitter.com/yourUsername';
+                    + 'https://twitter.com/yourUsername';
                 this.get('settings.errors').add('twitter', errMessage);
                 this.get('settings.hasValidated').pushObject('twitter');
                 return;

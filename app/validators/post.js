@@ -7,6 +7,7 @@ export default BaseValidator.create({
     properties: [
         'title',
         'authors',
+        'roomName',
         'customExcerpt',
         'canonicalUrl',
         'codeinjectionHead',

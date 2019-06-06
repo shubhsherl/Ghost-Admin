@@ -10,7 +10,7 @@ const {Promise} = RSVP;
 export default ModalComponent.extend(ValidationEngine, {
     notifications: service(),
     store: service(),
-    rcUsers: service('rc-services'),
+    rcService: service('rc-services'),
 
     classNames: 'modal-content invite-new-user',
 
@@ -54,10 +54,10 @@ export default ModalComponent.extend(ValidationEngine, {
         // TODO: either the validator should check the username's existence or
         // the API should return an appropriate error when attempting to save
         return new Promise((resolve, reject) => this._super().then(() => RSVP.hash({
-            rc_users: this.rcUsers.getUser(username),
+            rc_users: this.rcService.getUser(username),
             users: this.store.findAll('user', {reload: true})
         }).then((data) => {
-            let existingRCUser = data.rc_users.rc_users[0].exist;
+            let existingRCUser = data.rc_users.data[0].exist;
             let existingUser = data.users.findBy('rc_username', username);
 
             if (existingUser || !existingRCUser) {
@@ -103,7 +103,7 @@ export default ModalComponent.extend(ValidationEngine, {
         try {
             yield this.validate();
 
-            const user = yield this.rcUsers.addUser(username, role);
+            const user = yield this.rcService.addUser(username, role);
 
             // Check and notify if user is added
             if (user.invitation && user.invitation[0].message === 'User Added') {

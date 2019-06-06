@@ -20,6 +20,7 @@ export default Component.extend(SettingsMenuMixin, {
     session: service(),
     settings: service(),
     ui: service(),
+    rcServices: service('rc-services'),
 
     post: null,
 
@@ -36,7 +37,7 @@ export default Component.extend(SettingsMenuMixin, {
     ogTitleScratch: alias('post.ogTitleScratch'),
     twitterDescriptionScratch: alias('post.twitterDescriptionScratch'),
     twitterTitleScratch: alias('post.twitterTitleScratch'),
-    roomNameScratch: alias('post.roomName'),
+    roomNameScratch: alias('post.roomNameScratch'),
     slugValue: boundOneWay('post.slug'),
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
@@ -102,11 +103,11 @@ export default Component.extend(SettingsMenuMixin, {
 
     didReceiveAttrs() {
         this._super(...arguments);
-
+        
         // To save default roomName to post roomName in case user dosen't
         // change the room.
-        this.set('roomNameScratch', this.get('roomName'));
-        this.set('post.toAnnounce', this.get('announce'));
+        // this.set('post.roomName', this.get('roomName'));
+        // this.set('post.toAnnounce', this.get('announce'));
 
         // HACK: ugly method of working around the CSS animations so that we
         // can add throbbers only when the animation has finished
@@ -125,6 +126,11 @@ export default Component.extend(SettingsMenuMixin, {
             if (errors.has('publishedAtBlogDate') || errors.has('publishedAtBlogTime')) {
                 post.set('publishedAtBlogTZ', post.get('publishedAtUTC'));
                 post.validate({attribute: 'publishedAtBlog'});
+            }
+
+            if (errors.has('roomName')) {
+                post.set('roomNameScratch', post.get('roomName'));
+                post.validate({attribute: 'roomName'});
             }
 
             // remove throbbers
@@ -179,6 +185,39 @@ export default Component.extend(SettingsMenuMixin, {
             let announce = this.announce;
             this.toggleProperty('announce');
             post.set('toAnnounce', !announce);
+        },
+
+        validateRoom(newRoom) {
+            let oldRoom = this.roomName;
+            let post = this.post;
+            // let newRoom = this.roomNameScratch;
+            let errMessage = 'Room does not exist';
+            
+            // reset errors and validation
+            post.get('errors').remove('roomName');
+
+            if (!newRoom) {
+                newRoom = oldRoom;
+            }
+            this.rcServices.getRoom(newRoom)
+                .then((room) => {
+                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
+
+                    if (!existingRCRoom) {
+                        throw errMessage;
+                    }
+                    post.set('roomName', newRoom);
+                })
+                .catch((e)=>{
+                    if(e === errMessage){
+                        post.get('errors').add('roomName', errMessage);
+                        return;
+                    }
+                    throw e;
+                })
+                .finally(()=>{
+                    // this.get('post.hasValidated').pushObject('roomName');
+                });
         },
 
         /**

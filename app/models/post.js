@@ -136,6 +136,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     publishedAtBlogDate: '',
     publishedAtBlogTime: '',
 
+    roomNameScratch: boundOneWay('roomName'),
     canonicalUrlScratch: boundOneWay('canonicalUrl'),
     customExcerptScratch: boundOneWay('customExcerpt'),
     codeinjectionFootScratch: boundOneWay('codeinjectionFoot'),
@@ -318,5 +319,9 @@ export default Model.extend(Comparable, ValidationEngine, {
         let publishedAtBlogTZ = this.publishedAtBlogTZ;
         let publishedAtUTC = publishedAtBlogTZ ? publishedAtBlogTZ.utc() : null;
         this.set('publishedAtUTC', publishedAtUTC);
+
+        let roomName = this.roomName;
+        roomName = roomName?roomName:this.get('settings.room');
+        this.set('roomName', roomName);
     }
 });
