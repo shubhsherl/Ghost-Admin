@@ -41,10 +41,9 @@ export default Component.extend(SettingsMenuMixin, {
     slugValue: boundOneWay('post.slug'),
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
-    isNotPublished: not('post.isPublished'),
+    announce: boundOneWay('allowAnnouncements'),
     
-    announce: and('allowAnnouncements', 'isNotPublished'),
-    roomName: or('roomNameScratch', 'settings.room'),
+    roomName: or('roomNameScratch', 'settings.roomName'),
     facebookDescription: or('ogDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
     facebookImage: or('post.ogImage', 'post.featureImage'),
     facebookTitle: or('ogTitleScratch', 'seoTitle'),
@@ -104,11 +103,6 @@ export default Component.extend(SettingsMenuMixin, {
     didReceiveAttrs() {
         this._super(...arguments);
         
-        // To save default roomName to post roomName in case user dosen't
-        // change the room.
-        // this.set('post.roomName', this.get('roomName'));
-        // this.set('post.toAnnounce', this.get('announce'));
-
         // HACK: ugly method of working around the CSS animations so that we
         // can add throbbers only when the animation has finished
         // TODO: use liquid-fire to handle PSM slide-in and replace tabs manager
@@ -180,17 +174,23 @@ export default Component.extend(SettingsMenuMixin, {
             });
         },
 
+        /**
+         * triggered by user manually changing announce-setting
+         */
         toggleAnnounce() {
             let post = this.post;
             let announce = this.announce;
             this.toggleProperty('announce');
             post.set('toAnnounce', !announce);
+            post.set('announceChanged', true);
         },
 
+        /**
+         * triggered by user manually changing room-name
+         */
         validateRoom(newRoom) {
             let oldRoom = this.roomName;
             let post = this.post;
-            // let newRoom = this.roomNameScratch;
             let errMessage = 'Room does not exist';
             
             // reset errors and validation
@@ -207,6 +207,7 @@ export default Component.extend(SettingsMenuMixin, {
                         throw errMessage;
                     }
                     post.set('roomName', newRoom);
+                    post.set('roomId', room.data[0].rid);
                 })
                 .catch((e)=>{
                     if(e === errMessage){
@@ -215,9 +216,6 @@ export default Component.extend(SettingsMenuMixin, {
                     }
                     throw e;
                 })
-                .finally(()=>{
-                    // this.get('post.hasValidated').pushObject('roomName');
-                });
         },
 
         /**

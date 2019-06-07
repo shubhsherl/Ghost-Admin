@@ -225,7 +225,7 @@
                     <div class="gh-setting-content-extended">
                         {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="room"}}
                         {{gh-text-input
-                            value=(readonly settings.room)
+                            value=(readonly settings.roomName)
                             input=(action (mut _scratchRoom) value="target.value")
                             focus-out=(action "validateRoom")
                             data-test-room-input=true

@@ -36,7 +36,7 @@ export default Controller.extend({
     init() {
         this._super(...arguments);
         this.iconExtensions = ICON_EXTENSIONS;
-        this._scratchRoom = this.get('settings.room');
+        this._scratchRoom = this.get('settings.roomName');
     },
 
     privateRSSUrl: computed('config.blogUrl', 'settings.publicHash', function () {
@@ -175,7 +175,7 @@ export default Controller.extend({
 
         validateRoom() {
             let newRoom = this._scratchRoom;
-            let oldRoom = this.get('settings.room');
+            let oldRoom = this.get('settings.roomName');
             let errMessage = 'Room does not exist';
             
             // reset errors and validation
@@ -193,7 +193,8 @@ export default Controller.extend({
                         throw errMessage;
                     }
                     run.schedule('afterRender', this, function () {
-                        this.set('settings.room', newRoom);
+                        this.set('settings.roomName', newRoom);
+                        this.set('settings.roomId', room.data[0].rid);
                     });
                 })
                 .catch((e) => {

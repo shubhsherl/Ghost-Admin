@@ -105,6 +105,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     url: attr('string'),
     uuid: attr('string'),
     roomName: attr('string'),
+    roomId: attr('string'),
     toAnnounce: attr('boolean', {defaultValue: false}),
 
     authors: hasMany('user', {
@@ -122,6 +123,7 @@ export default Model.extend(Comparable, ValidationEngine, {
         return this.get('authors.firstObject');
     }),
 
+    announceChanged: false,
     scratch: null,
     titleScratch: null,
 
@@ -321,7 +323,15 @@ export default Model.extend(Comparable, ValidationEngine, {
         this.set('publishedAtUTC', publishedAtUTC);
 
         let roomName = this.roomName;
-        roomName = roomName?roomName:this.get('settings.room');
+        const roomId = roomName?this.roomId:this.get('settings.roomId');
+        roomName = roomName?roomName:this.get('settings.roomName');
         this.set('roomName', roomName);
+        this.set('roomId', roomId);
+
+        if (!this.announceChanged) {
+            // TODO: set toAnnounce = false, for already published aritcles
+            const toAnnounce = this.get('settings.isAnnounced');
+            this.set('toAnnounce', toAnnounce);
+        }
     }
 });
