@@ -71,6 +71,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     ghostPaths: service(),
     clock: service(),
     settings: service(),
+    notifications: service(),
+    rcServices: service('rc-services'),
 
     displayName: 'post',
     validationType: 'post',
@@ -90,6 +92,9 @@ export default Model.extend(Comparable, ValidationEngine, {
     twitterImage: attr('string'),
     twitterTitle: attr('string'),
     twitterDescription: attr('string'),
+    rcImage: attr('string'),
+    rcTitle: attr('string'),
+    rcDescription: attr('string'),
     html: attr('string'),
     locale: attr('string'),
     metaDescription: attr('string'),
@@ -149,6 +154,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     ogTitleScratch: boundOneWay('ogTitle'),
     twitterDescriptionScratch: boundOneWay('twitterDescription'),
     twitterTitleScratch: boundOneWay('twitterTitle'),
+    rcDescriptionScratch: boundOneWay('rcDescription'),
+    rcTitleScratch: boundOneWay('rcTitle'),
 
     isPublished: equal('status', 'published'),
     isDraft: equal('status', 'draft'),
@@ -323,8 +330,8 @@ export default Model.extend(Comparable, ValidationEngine, {
         this.set('publishedAtUTC', publishedAtUTC);
 
         let roomName = this.roomName;
-        const roomId = roomName?this.roomId:this.get('settings.roomId');
-        roomName = roomName?roomName:this.get('settings.roomName');
+        const roomId = roomName ? this.roomId : this.get('settings.roomId');
+        roomName = roomName ? roomName : this.get('settings.roomName');
         this.set('roomName', roomName);
         this.set('roomId', roomId);
 
@@ -332,6 +339,18 @@ export default Model.extend(Comparable, ValidationEngine, {
             // TODO: set toAnnounce = false, for already published aritcles
             const toAnnounce = this.get('settings.isAnnounced');
             this.set('toAnnounce', toAnnounce);
+        }
+
+        // Notify if User can't announce post in room
+        if (this.toAnnounce && this.isPublished) {
+            this.rcServices.getRoom(roomName)
+                .then((room) => {
+                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
+
+                    if (!existingRCRoom) {
+                        this.notifications.showAlert('Post will not be announced. Make Sure you have access to the room', {type: 'error', key: 'invite.send.failed'});
+                    }
+                });
         }
     }
 });

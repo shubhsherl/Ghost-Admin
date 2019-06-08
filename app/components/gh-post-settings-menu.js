@@ -37,6 +37,8 @@ export default Component.extend(SettingsMenuMixin, {
     ogTitleScratch: alias('post.ogTitleScratch'),
     twitterDescriptionScratch: alias('post.twitterDescriptionScratch'),
     twitterTitleScratch: alias('post.twitterTitleScratch'),
+    rcDescriptionScratch: alias('post.rcDescriptionScratch'),
+    rcTitleScratch: alias('post.rcTitleScratch'),
     roomNameScratch: alias('post.roomNameScratch'),
     slugValue: boundOneWay('post.slug'),
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
@@ -50,6 +52,9 @@ export default Component.extend(SettingsMenuMixin, {
     twitterDescription: or('twitterDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
     twitterImage: or('post.twitterImage', 'post.featureImage'),
     twitterTitle: or('twitterTitleScratch', 'seoTitle'),
+    rcDescription: or('rcDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
+    rcImage: or('post.rcImage', 'post.featureImage'),
+    rcTitle: or('rcTitleScratch', 'seoTitle'),
 
     seoTitle: computed('metaTitleScratch', 'post.titleScratch', function () {
         return this.metaTitleScratch || this.post.titleScratch || '(Untitled)';
@@ -102,7 +107,7 @@ export default Component.extend(SettingsMenuMixin, {
 
     didReceiveAttrs() {
         this._super(...arguments);
-        
+
         // HACK: ugly method of working around the CSS animations so that we
         // can add throbbers only when the animation has finished
         // TODO: use liquid-fire to handle PSM slide-in and replace tabs manager
@@ -192,7 +197,7 @@ export default Component.extend(SettingsMenuMixin, {
             let oldRoom = this.roomName;
             let post = this.post;
             let errMessage = 'Room does not exist';
-            
+
             // reset errors and validation
             post.get('errors').remove('roomName');
 
@@ -215,7 +220,7 @@ export default Component.extend(SettingsMenuMixin, {
                         return;
                     }
                     throw e;
-                })
+                });
         },
 
         /**
@@ -457,6 +462,52 @@ export default Component.extend(SettingsMenuMixin, {
             });
         },
 
+        setRcTitle(rcTitle) {
+            // Grab the post and current stored twitter title
+            let post = this.post;
+            let currentTitle = post.get('rcTitle');
+
+            // If the title entered matches the stored twitter title, do nothing
+            if (currentTitle === rcTitle) {
+                return;
+            }
+
+            // If the title entered is different, set it as the new twitter title
+            post.set('rcTitle', rcTitle);
+
+            // Make sure the twitter title is valid and if so, save it into the post
+            return post.validate({property: 'rcTitle'}).then(() => {
+                if (post.get('isNew')) {
+                    return;
+                }
+
+                return this.savePost.perform();
+            });
+        },
+
+        setRcDescription(rcDescription) {
+            // Grab the post and current stored twitter description
+            let post = this.post;
+            let currentDescription = post.get('rcDescription');
+
+            // If the description entered matches the stored twitter description, do nothing
+            if (currentDescription === rcDescription) {
+                return;
+            }
+
+            // If the description entered is different, set it as the new twitter description
+            post.set('rcDescription', rcDescription);
+
+            // Make sure the twitter description is valid and if so, save it into the post
+            return post.validate({property: 'rcDescription'}).then(() => {
+                if (post.get('isNew')) {
+                    return;
+                }
+
+                return this.savePost.perform();
+            });
+        },
+
         setCoverImage(image) {
             this.set('post.featureImage', image);
 
@@ -524,6 +575,32 @@ export default Component.extend(SettingsMenuMixin, {
 
         clearTwitterImage() {
             this.set('post.twitterImage', '');
+
+            if (this.get('post.isNew')) {
+                return;
+            }
+
+            this.savePost.perform().catch((error) => {
+                this.showError(error);
+                this.post.rollbackAttributes();
+            });
+        },
+
+        setRcImage(image) {
+            this.set('post.rcImage', image);
+
+            if (this.get('post.isNew')) {
+                return;
+            }
+
+            this.savePost.perform().catch((error) => {
+                this.showError(error);
+                this.post.rollbackAttributes();
+            });
+        },
+
+        clearRcImage() {
+            this.set('post.rcImage', '');
 
             if (this.get('post.isNew')) {
                 return;

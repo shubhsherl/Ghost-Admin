@@ -99,7 +99,7 @@ export default Controller.extend({
             if (isPrivate && changedAttrs.isPrivate) {
                 settings.set('password', randomPassword());
 
-                // reset the password when isPrivate is disabled
+            // reset the password when isPrivate is disabled
             } else if (changedAttrs.password) {
                 settings.set('password', changedAttrs.password[0]);
             }
@@ -177,7 +177,7 @@ export default Controller.extend({
             let newRoom = this._scratchRoom;
             let oldRoom = this.get('settings.roomName');
             let errMessage = 'Room does not exist';
-            
+
             // reset errors and validation
             this.get('settings.errors').remove('room');
             this.get('settings.hasValidated').removeObject('room');
@@ -254,7 +254,7 @@ export default Controller.extend({
             } catch (e) {
                 if (e === 'invalid url') {
                     errMessage = 'The URL must be in a format like '
-                        + 'https://www.facebook.com/yourPage';
+                               + 'https://www.facebook.com/yourPage';
                     this.get('settings.errors').add('facebook', errMessage);
                     return;
                 }
@@ -313,7 +313,7 @@ export default Controller.extend({
                 });
             } else {
                 errMessage = 'The URL must be in a format like '
-                    + 'https://twitter.com/yourUsername';
+                           + 'https://twitter.com/yourUsername';
                 this.get('settings.errors').add('twitter', errMessage);
                 this.get('settings.hasValidated').pushObject('twitter');
                 return;
