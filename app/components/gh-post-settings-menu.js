@@ -186,7 +186,7 @@ export default Component.extend(SettingsMenuMixin, {
             let post = this.post;
             let announce = this.announce;
             this.toggleProperty('announce');
-            post.set('toAnnounce', !announce);
+            post.set('announce', !announce);
             post.set('announceChanged', true);
         },
 

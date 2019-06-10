@@ -81,6 +81,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     excerpt: attr('string'),
     customExcerpt: attr('string'),
     featured: attr('boolean', {defaultValue: false}),
+    announce: attr('boolean', {defaultValue: false}),
     featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),
@@ -111,7 +112,6 @@ export default Model.extend(Comparable, ValidationEngine, {
     uuid: attr('string'),
     roomName: attr('string'),
     roomId: attr('string'),
-    toAnnounce: attr('boolean', {defaultValue: false}),
 
     authors: hasMany('user', {
         embedded: 'always',
@@ -324,6 +324,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     //
     // the publishedAtBlog{Date/Time} strings are set separately so they can be
     // validated, grab that time if it exists and set the publishedAtUTC
+    // 
+    // Add announcing room and announce.
     beforeSave() {
         let publishedAtBlogTZ = this.publishedAtBlogTZ;
         let publishedAtUTC = publishedAtBlogTZ ? publishedAtBlogTZ.utc() : null;
@@ -336,21 +338,8 @@ export default Model.extend(Comparable, ValidationEngine, {
         this.set('roomId', roomId);
 
         if (!this.announceChanged) {
-            // TODO: set toAnnounce = false, for already published aritcles
-            const toAnnounce = this.get('settings.isAnnounced');
-            this.set('toAnnounce', toAnnounce);
-        }
-
-        // Notify if User can't announce post in room
-        if (this.toAnnounce && this.isPublished) {
-            this.rcServices.getRoom(roomName)
-                .then((room) => {
-                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
-
-                    if (!existingRCRoom) {
-                        this.notifications.showAlert('Post will not be announced. Make Sure you have access to the room', {type: 'error', key: 'invite.send.failed'});
-                    }
-                });
+            const announce = this.get('settings.isAnnounced');
+            this.set('announce', announce);
         }
     }
 });
