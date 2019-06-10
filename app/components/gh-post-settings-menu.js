@@ -26,6 +26,7 @@ export default Component.extend(SettingsMenuMixin, {
 
     _showSettingsMenu: false,
     _showThrobbers: false,
+    _collaborate: false,
 
     canonicalUrlScratch: alias('post.canonicalUrlScratch'),
     customExcerptScratch: alias('post.customExcerptScratch'),
@@ -42,8 +43,10 @@ export default Component.extend(SettingsMenuMixin, {
     roomNameScratch: alias('post.roomNameScratch'),
     slugValue: boundOneWay('post.slug'),
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
+    allowCollaboration: boundOneWay('settings.canCollaborate'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
     announce: boundOneWay('allowAnnouncements'),
+    
     
     roomName: or('roomNameScratch', 'settings.roomName'),
     facebookDescription: or('ogDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
@@ -188,6 +191,13 @@ export default Component.extend(SettingsMenuMixin, {
             this.toggleProperty('announce');
             post.set('announce', !announce);
             post.set('announceChanged', true);
+        },
+
+        toggleCollaborate() {
+            let post = this.post;
+            let collaborate = this._collaborate;
+            this.toggleProperty('_collaborate');
+            post.set('toCollaborate', !collaborate);
         },
 
         /**

@@ -60,9 +60,9 @@
                             data-test-field="room-name"}}
                         {{gh-error-message errors=post.errors property="roomName" data-test-error="room-name"}}
                         {{#if allowAuthorRooms}}
-                        <p>Set Room Name to Announce</p>
+                            <p>Set Room Name to Announce</p>
                         {{else}}
-                        <p>Cannot Change the Room Name</p>
+                            <p>Cannot Change the Room Name</p>
                         {{/if}}
                     <div class="form-group for-checkbox">
                         <label class="checkbox" for="announce" {{action "toggleAnnounce" bubbles="false"}}>
@@ -77,6 +77,27 @@
                         <p>Announce this {{post.displayName}}</p>
                         </label>
                     </div>
+
+                    {{#if allowCollaboration}}
+                        <div class="form-group for-checkbox">
+                            <label class="checkbox" for="collaborate" {{action "toggleCollaborate" bubbles="false"}}>
+                            <input
+                                type="checkbox"
+                                disabled={{not announce}}
+                                checked={{_collaborate}}
+                                class="gh-input post-settings-collaborate"
+                                onclick={{action (mut _collaborate) value="target.checked"}}
+                                data-test-checkbox="collaborate"
+                            >
+                            <span class="input-toggle-component"></span>
+                            {{#if roomNameScratch}}
+                                <p>Collaborate with {{roomNameScratch}}</p>
+                            {{else}}
+                                <p>Collaborate with {{roomName}}</p>
+                            {{/if}}
+                            </label>
+                        </div>
+                    {{/if}}
                 </div>
                 {{/if}}
 
