@@ -41,7 +41,16 @@ export default AuthenticatedRoute.extend({
         return this.get('session.user').then((user) => {
             let returnRoute = `${pluralize(post.constructor.modelName)}.index`;
 
-            if (user.get('isAuthorOrContributor') && !post.isAuthoredByUser(user)) {
+            if (!post.isAuthoredByUser(user) && post.collaborate) {
+                return post.tryCollaboration(user).then((res) => {
+                    if (!res) {
+                        return this.replaceWith(returnRoute);
+                    }
+                    return this.refresh();
+                });
+            }
+
+            if (!post.isAuthoredByUser(user)) {
                 return this.replaceWith(returnRoute);
             }
 

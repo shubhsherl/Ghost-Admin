@@ -22,9 +22,9 @@ export default Service.extend({
     },
 
     addUser(username, role) {
-        let authUrl = this.get('ghostPaths.url').api('authentication', 'adduser');
+        let url = this.get('ghostPaths.url').api('authentication', 'adduser');
         const pid = this.get('session.user.id');
-        return this.ajax.post(authUrl, {
+        return this.ajax.post(url, {
             dataType: 'json',
             user: {id: '1'},
             data: {
@@ -44,6 +44,20 @@ export default Service.extend({
             data: {
                 room: [{
                     title: title
+                }]
+            }
+        });
+    },
+
+    collaborate(userId, postId, post) {
+        let url = this.get('ghostPaths.url').api('rcapi', 'collaborate');
+        return this.ajax.post(url, {
+            dataType: 'json',
+            data: {
+                collaboration: [{
+                    rc_id: userId,
+                    post_id: postId,
+                    post: post
                 }]
             }
         });

@@ -83,6 +83,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     customExcerpt: attr('string'),
     featured: attr('boolean', {defaultValue: false}),
     announce: attr('boolean', {defaultValue: false}),
+    collaborate: attr('boolean', {defaultValue: false}),
     featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),
@@ -275,6 +276,22 @@ export default Model.extend(Comparable, ValidationEngine, {
 
     isAuthoredByUser(user) {
         return this.authors.includes(user);
+    },
+
+    tryCollaboration(user) {
+        if (!this.get('settings.canCollaborate')) {
+            return false;
+        }
+
+        this.authors.pushObject(user);
+        return this.rcServices.collaborate(user.get('rc_id'), this.get('id'), this)
+            .then((result) => {
+                const collaborated = result.data[0].collaborate;
+                if (!collaborated) {
+                    this.authors.removeObjects(user);
+                }
+                return collaborated;
+            });
     },
 
     // a custom sort function is needed in order to sort the posts list the same way the server would:
