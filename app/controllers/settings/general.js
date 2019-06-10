@@ -113,6 +113,7 @@ export default Controller.extend({
             // Change isAuthorsRooms to false when isAnnounce is disabled
             if (!isAnnounced) {
                 settings.set('isAuthorsRooms', false);
+                settings.set('canCollaborate', false);
             }
         },
 
@@ -132,6 +133,17 @@ export default Controller.extend({
             let settings = this.settings;
 
             settings.set('inviteOnly', inviteOnly);
+        },
+
+        toggleCanCollaborate(canCollaborate) {
+            let settings = this.settings;
+
+            // canCollaborate and inviteOnly can be set true at the same time.
+            if (canCollaborate) {
+                settings.set('inviteOnly', false);
+            }
+
+            settings.set('canCollaborate', canCollaborate);
         },
 
         toggleLeaveSettingsModal(transition) {

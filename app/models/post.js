@@ -113,8 +113,12 @@ export default Model.extend(Comparable, ValidationEngine, {
     uuid: attr('string'),
     roomName: attr('string'),
     roomId: attr('string'),
+<<<<<<< HEAD
     discussionRoomId: attr('string'),
     discussionRoomName: attr('string'),
+=======
+    toCollaborate: attr('boolean', {defaultValue: false}),
+>>>>>>> 4f5f7614e... add collaboration in setting and post
 
     authors: hasMany('user', {
         embedded: 'always',
