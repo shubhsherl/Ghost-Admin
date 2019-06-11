@@ -77,27 +77,6 @@
                         <p>Announce this {{post.displayName}}</p>
                         </label>
                     </div>
-
-                    {{#if allowCollaboration}}
-                        <div class="form-group for-checkbox">
-                            <label class="checkbox" for="collaborate" {{action "toggleCollaborate" bubbles="false"}}>
-                            <input
-                                type="checkbox"
-                                disabled={{not announce}}
-                                checked={{_collaborate}}
-                                class="gh-input post-settings-collaborate"
-                                onclick={{action (mut _collaborate) value="target.checked"}}
-                                data-test-checkbox="collaborate"
-                            >
-                            <span class="input-toggle-component"></span>
-                            {{#if roomNameScratch}}
-                                <p>Collaborate with {{roomNameScratch}}</p>
-                            {{else}}
-                                <p>Collaborate with {{roomName}}</p>
-                            {{/if}}
-                            </label>
-                        </div>
-                    {{/if}}
                 </div>
                 {{/if}}
 
@@ -143,13 +122,36 @@
                     {{gh-error-message errors=post.errors property="customExcerpt" data-test-error="custom-excerpt"}}
                 {{/gh-form-group}}
 
-                {{#unless session.user.isAuthorOrContributor}}
-                    {{#gh-form-group class="for-select" errors=post.errors hasValidated=post.hasValidated property="authors" data-test-input="authors"}}
-                        <label for="author-list">Authors</label>
-                        {{gh-psm-authors-input selectedAuthors=post.authors updateAuthors=(action "changeAuthors") triggerId="author-list"}}
-                        {{gh-error-message errors=post.errors property="authors" data-test-error="authors"}}
-                    {{/gh-form-group}}
-                {{/unless}}
+                {{#gh-form-group class="for-select" errors=post.errors hasValidated=post.hasValidated property="authors" data-test-input="authors"}}
+                    <label for="author-list">Authors</label>
+                    {{gh-psm-authors-input selectedAuthors=post.authors updateAuthors=(action "changeAuthors") triggerId="author-list"}}
+                    {{gh-error-message errors=post.errors property="authors" data-test-error="authors"}}
+                {{/gh-form-group}}
+
+                {{#if allowCollaboration}}
+                <div class="form-group">
+                    <label for="collaboration">{{capitalize post.displayName}} Collaboration</label>
+                        {{gh-text-input
+                            class="post-setting-collaborate-room-name"
+                            id="collaborate-room-name"
+                            name="post-setting-collaborate-room-name"
+                            placeholder=(truncate collaborationRoom 40)
+                            value=(readonly collaborationRoom)
+                            focus-out=(action "validateCollaborateRoom")
+                            input=(action (mut collaborationRoom) value="target.value")
+                            stopEnterKeyDownPropagation=true
+                            data-test-field="room-name"}}
+                        {{gh-error-message errors=post.errors property="collaborateRoomName" data-test-error="collaborate-room-name"}}
+                        <p>Collaborate with other authors
+                            {{gh-task-button collaborateText
+                                task=collaborate
+                                successText=successText
+                                runningText=runningText
+                                class="gh-btn gh-btn-blue settings-menu-collaborate-button gh-btn-icon"
+                                data-test-collaborate=true}}
+                        </p>
+                </div>
+                {{/if}}
 
                 <ul class="nav-list nav-list-block">
                     <li class="nav-list-item" {{action "showSubview" "meta-data"}} data-test-button="meta-data">

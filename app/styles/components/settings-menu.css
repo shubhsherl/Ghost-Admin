@@ -163,6 +163,11 @@
     white-space: nowrap;
 }
 
+.settings-menu-collaborate-button {
+    float: right;
+    margin-bottom: 4px;
+}
+
 .settings-menu-delete-button {
     padding-left: 0;
     color: var(--red);
