@@ -83,6 +83,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     customExcerpt: attr('string'),
     featured: attr('boolean', {defaultValue: false}),
     announce: attr('boolean', {defaultValue: false}),
+    collaborate: attr('boolean', {defaultValue: false}),
     featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),
@@ -113,12 +114,9 @@ export default Model.extend(Comparable, ValidationEngine, {
     uuid: attr('string'),
     roomName: attr('string'),
     roomId: attr('string'),
-<<<<<<< HEAD
     discussionRoomId: attr('string'),
     discussionRoomName: attr('string'),
-=======
     toCollaborate: attr('boolean', {defaultValue: false}),
->>>>>>> 4f5f7614e... add collaboration in setting and post
 
     authors: hasMany('user', {
         embedded: 'always',
@@ -278,6 +276,10 @@ export default Model.extend(Comparable, ValidationEngine, {
     },
 
     isAuthoredByUser(user) {
+        return this.authors.includes(user);
+    },
+
+    tryCollaboration(user) {
         return this.authors.includes(user);
     },
 

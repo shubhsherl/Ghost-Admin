@@ -45,4 +45,16 @@ export default Service.extend({
             }
         });
     }
+    // collaborate(user, post) {
+    //     let authUrl = this.get('ghostPaths.url').api('rcapi', 'collaborate');
+    //     return this.ajax.post(authUrl, {
+    //         dataType: 'json',
+    //         data: {
+    //             user: [{
+    //                 rc_username: username,
+    //                 role: role
+    //             }]
+    //         }
+    //     });
+    // }
 });

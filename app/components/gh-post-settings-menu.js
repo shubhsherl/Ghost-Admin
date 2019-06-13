@@ -26,10 +26,6 @@ export default Component.extend(SettingsMenuMixin, {
 
     _showSettingsMenu: false,
     _showThrobbers: false,
-    _collaborate: false,
-    collaborateText: 'Collaborate',
-    runningText: 'Collaborating',
-    successText: 'Collaborated',
 
     canonicalUrlScratch: alias('post.canonicalUrlScratch'),
     customExcerptScratch: alias('post.customExcerptScratch'),
@@ -49,6 +45,7 @@ export default Component.extend(SettingsMenuMixin, {
     allowCollaboration: boundOneWay('settings.canCollaborate'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
     announce: boundOneWay('allowAnnouncements'),
+    collaborate: boundOneWay('post.collaborate'),
     
     
     roomName: or('roomNameScratch', 'settings.roomName'),
@@ -61,7 +58,6 @@ export default Component.extend(SettingsMenuMixin, {
     rcDescription: or('rcDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
     rcImage: or('post.rcImage', 'post.featureImage'),
     rcTitle: or('rcTitleScratch', 'seoTitle'),
-    collaborationRoom: boundOneWay('settings.roomName'),
 
     seoTitle: computed('metaTitleScratch', 'post.titleScratch', function () {
         return this.metaTitleScratch || this.post.titleScratch || '(Untitled)';
@@ -199,9 +195,9 @@ export default Component.extend(SettingsMenuMixin, {
 
         toggleCollaborate() {
             let post = this.post;
-            let collaborate = this._collaborate;
-            this.toggleProperty('_collaborate');
-            post.set('toCollaborate', !collaborate);
+            let collaborate = this.collaborate;
+            this.toggleProperty('collaborate');
+            post.set('collaborate', !collaborate);
         },
 
         /**
@@ -231,31 +227,6 @@ export default Component.extend(SettingsMenuMixin, {
                 .catch((e) => {
                     if (e === errMessage){
                         post.get('errors').add('roomName', errMessage);
-                        return;
-                    }
-                    throw e;
-                });
-        },
-
-        validateCollaborateRoom() {
-            let room = this.collaborationRoom;
-            let post = this.post;
-            let errMessage = 'Room does not exist';
-
-            // Using post.errors for collaboration room
-            post.get('errors').remove('collaborateRoomName');
-
-            this.rcServices.getRoom(room)
-                .then((room) => {
-                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
-
-                    if (!existingRCRoom) {
-                        throw errMessage;
-                    }
-                })
-                .catch((e)=>{
-                    if(e === errMessage){
-                        post.get('errors').add('collaborateRoomName', errMessage);
                         return;
                     }
                     throw e;
@@ -679,24 +650,6 @@ export default Component.extend(SettingsMenuMixin, {
             }
         }
     },
-
-    collaborate: task(function* () {
-        
-        try {
-            // validate room first to avoid an alert for displayed errors
-            yield this.validateCollaborateRoom()
-            this.notifications.showAPIError('error');
-            // actual save will show alert for other failed validations
-            // let post = rcServices.addCollaboration(this.post, this.collaborationRoom);
-
-            // return false;
-        } catch (error) {
-            // re-throw if we don't have a validation error
-            if (error) {
-                throw error;
-            }
-        }
-    }).restartable(),
 
     showThrobbers: task(function* () {
         yield timeout(PSM_ANIMATION_LENGTH);
