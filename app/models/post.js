@@ -82,6 +82,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     customExcerpt: attr('string'),
     featured: attr('boolean', {defaultValue: false}),
     announce: attr('boolean', {defaultValue: false}),
+    collaborate: attr('boolean', {defaultValue: false}),
     featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),
@@ -112,7 +113,6 @@ export default Model.extend(Comparable, ValidationEngine, {
     uuid: attr('string'),
     roomName: attr('string'),
     roomId: attr('string'),
-    toCollaborate: attr('boolean', {defaultValue: false}),
 
     authors: hasMany('user', {
         embedded: 'always',
@@ -272,6 +272,10 @@ export default Model.extend(Comparable, ValidationEngine, {
     },
 
     isAuthoredByUser(user) {
+        return this.authors.includes(user);
+    },
+
+    tryCollaboration(user) {
         return this.authors.includes(user);
     },
 
