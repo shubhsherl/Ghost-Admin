@@ -44,7 +44,7 @@
                     </div>
                     {{gh-url-preview slug=slugValue tagName="p" classNames="description"}}
                 </div>
-                {{#if allowAnnouncements}}
+                {{#if (and allowAnnouncements (eq post.displayName 'post'))}}
                 <div class="form-group">
                     <label for="announcement">{{capitalize post.displayName}} Announcement</label>
                         {{gh-text-input

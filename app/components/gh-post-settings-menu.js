@@ -3,7 +3,7 @@ import SettingsMenuMixin from 'ghost-admin/mixins/settings-menu-component';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import formatMarkdown from 'ghost-admin/utils/format-markdown';
 import moment from 'moment';
-import {alias, and, not, or} from '@ember/object/computed';
+import {alias, or} from '@ember/object/computed';
 import {computed} from '@ember/object';
 import {run} from '@ember/runloop';
 import {inject as service} from '@ember/service';
@@ -214,8 +214,8 @@ export default Component.extend(SettingsMenuMixin, {
                     post.set('roomName', newRoom);
                     post.set('roomId', room.data[0].rid);
                 })
-                .catch((e)=>{
-                    if(e === errMessage){
+                .catch((e) => {
+                    if (e === errMessage){
                         post.get('errors').add('roomName', errMessage);
                         return;
                     }
