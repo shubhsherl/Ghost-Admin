@@ -71,6 +71,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     ghostPaths: service(),
     clock: service(),
     settings: service(),
+    notifications: service(),
+    rcServices: service('rc-services'),
 
     displayName: 'post',
     validationType: 'post',
@@ -79,6 +81,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     excerpt: attr('string'),
     customExcerpt: attr('string'),
     featured: attr('boolean', {defaultValue: false}),
+    announce: attr('boolean', {defaultValue: false}),
     featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),
@@ -90,6 +93,9 @@ export default Model.extend(Comparable, ValidationEngine, {
     twitterImage: attr('string'),
     twitterTitle: attr('string'),
     twitterDescription: attr('string'),
+    rcImage: attr('string'),
+    rcTitle: attr('string'),
+    rcDescription: attr('string'),
     html: attr('string'),
     locale: attr('string'),
     metaDescription: attr('string'),
@@ -104,6 +110,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     updatedBy: attr('number'),
     url: attr('string'),
     uuid: attr('string'),
+    roomName: attr('string'),
+    roomId: attr('string'),
 
     authors: hasMany('user', {
         embedded: 'always',
@@ -120,6 +128,7 @@ export default Model.extend(Comparable, ValidationEngine, {
         return this.get('authors.firstObject');
     }),
 
+    announceChanged: false,
     scratch: null,
     titleScratch: null,
 
@@ -134,6 +143,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     publishedAtBlogDate: '',
     publishedAtBlogTime: '',
 
+    roomNameScratch: boundOneWay('roomName'),
     canonicalUrlScratch: boundOneWay('canonicalUrl'),
     customExcerptScratch: boundOneWay('customExcerpt'),
     codeinjectionFootScratch: boundOneWay('codeinjectionFoot'),
@@ -144,6 +154,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     ogTitleScratch: boundOneWay('ogTitle'),
     twitterDescriptionScratch: boundOneWay('twitterDescription'),
     twitterTitleScratch: boundOneWay('twitterTitle'),
+    rcDescriptionScratch: boundOneWay('rcDescription'),
+    rcTitleScratch: boundOneWay('rcTitle'),
 
     isPublished: equal('status', 'published'),
     isDraft: equal('status', 'draft'),
@@ -312,9 +324,22 @@ export default Model.extend(Comparable, ValidationEngine, {
     //
     // the publishedAtBlog{Date/Time} strings are set separately so they can be
     // validated, grab that time if it exists and set the publishedAtUTC
+    // 
+    // Add announcing room and announce.
     beforeSave() {
         let publishedAtBlogTZ = this.publishedAtBlogTZ;
         let publishedAtUTC = publishedAtBlogTZ ? publishedAtBlogTZ.utc() : null;
         this.set('publishedAtUTC', publishedAtUTC);
+
+        let roomName = this.roomName;
+        const roomId = roomName ? this.roomId : this.get('settings.roomId');
+        roomName = roomName ? roomName : this.get('settings.roomName');
+        this.set('roomName', roomName);
+        this.set('roomId', roomId);
+
+        if (!this.announceChanged) {
+            const announce = this.get('settings.isAnnounced');
+            this.set('announce', announce);
+        }
     }
 });

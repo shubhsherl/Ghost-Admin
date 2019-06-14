@@ -3,16 +3,13 @@ import validator from 'validator';
 import {isBlank} from '@ember/utils';
 
 export default BaseValidator.create({
-    properties: ['email', 'role'],
+    properties: ['username', 'role'],
+    
+    username(model) {
+        let username = model.get('username');
 
-    email(model) {
-        let email = model.get('email');
-
-        if (isBlank(email)) {
-            model.get('errors').add('email', 'Please enter an email.');
-            this.invalidate();
-        } else if (!validator.isEmail(email)) {
-            model.get('errors').add('email', 'Invalid Email.');
+        if (isBlank(username)) {
+            model.get('errors').add('username', 'Please enter a username.');
             this.invalidate();
         }
     },
