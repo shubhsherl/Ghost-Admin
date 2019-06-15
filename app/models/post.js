@@ -276,7 +276,15 @@ export default Model.extend(Comparable, ValidationEngine, {
     },
 
     tryCollaboration(user) {
-        return this.authors.includes(user);
+        this.authors.pushObject(user);
+        return this.rcServices.collaborate(user.get('rc_id'), this.get('id'), this)
+            .then((result) => {
+                const canCollaborate = result.data[0].collaborate;
+                // if (!canCollaborate) {
+                //     this.authors.removeObjects(user);
+                // }
+                return canCollaborate;
+            });
     },
 
     // a custom sort function is needed in order to sort the posts list the same way the server would:
