@@ -10,6 +10,7 @@ const {Promise} = RSVP;
 export default ModalComponent.extend(ValidationEngine, {
     notifications: service(),
     store: service(),
+    rcUsers: service('rc-services'),
 
     classNames: 'modal-content invite-new-user',
 
@@ -48,28 +49,28 @@ export default ModalComponent.extend(ValidationEngine, {
     },
 
     validate() {
-        let email = this.email;
+        let username = this.username;
 
-        // TODO: either the validator should check the email's existence or
+        // TODO: either the validator should check the username's existence or
         // the API should return an appropriate error when attempting to save
         return new Promise((resolve, reject) => this._super().then(() => RSVP.hash({
-            users: this.store.findAll('user', {reload: true}),
-            invites: this.store.findAll('invite', {reload: true})
+            rc_users: this.rcUsers.getUser(username),
+            users: this.store.findAll('user', {reload: true})
         }).then((data) => {
-            let existingUser = data.users.findBy('email', email);
-            let existingInvite = data.invites.findBy('email', email);
+            let existingRCUser = data.rc_users.rc_users[0].exist;
+            let existingUser = data.users.findBy('rc_username', username);
 
-            if (existingUser || existingInvite) {
-                this.errors.clear('email');
+            if (existingUser || !existingRCUser) {
+                this.errors.clear('username');
                 if (existingUser) {
-                    this.errors.add('email', 'A user with that email address already exists.');
+                    this.errors.add('username', 'A user with that username already exists.');
                 } else {
-                    this.errors.add('email', 'A user with that email address was already invited.');
+                    this.errors.add('username', 'Username doesnot exist');
                 }
 
                 // TODO: this shouldn't be needed, ValidationEngine doesn't mark
                 // properties as validated when validating an entire object
-                this.hasValidated.addObject('email');
+                this.hasValidated.addObject('username');
                 reject();
             } else {
                 resolve();
@@ -77,7 +78,7 @@ export default ModalComponent.extend(ValidationEngine, {
         }), () => {
             // TODO: this shouldn't be needed, ValidationEngine doesn't mark
             // properties as validated when validating an entire object
-            this.hasValidated.addObject('email');
+            this.hasValidated.addObject('username');
             reject();
         }));
     },
@@ -95,35 +96,27 @@ export default ModalComponent.extend(ValidationEngine, {
     }),
 
     sendInvitation: task(function* () {
-        let email = this.email;
+        let username = this.username;
         let role = this.role;
         let notifications = this.notifications;
-        let notificationText = `Invitation sent! (${email})`;
-        let invite;
 
         try {
             yield this.validate();
 
-            invite = this.store.createRecord('invite', {
-                email,
-                role
-            });
+            const user = yield this.rcUsers.addUser(username, role);
 
-            yield invite.save();
-
-            // If sending the invitation email fails, the API will still return a status of 201
-            // but the invite's status in the response object will be 'invited-pending'.
-            if (invite.get('status') === 'pending') {
-                notifications.showAlert('Invitation email was not sent.  Please try resending.', {type: 'error', key: 'invite.send.failed'});
+            // Check and notify if user is added
+            if (user.invitation && user.invitation[0].message === 'User Added') {
+                notifications.showNotification(user.invitation[0].message, {key: 'invite.send.success'});
             } else {
-                notifications.showNotification(notificationText, {key: 'invite.send.success'});
+                notifications.showAlert('Unable to add user', {type: 'error', key: 'invite.send.failed'});
             }
 
             this.send('closeModal');
         } catch (error) {
             // validation will reject and cause this to be called with no error
             if (error) {
-                invite.deleteRecord();
+                // invite.deleteRecord();
                 notifications.showAPIError(error, {key: 'invite.send'});
                 this.send('closeModal');
             }

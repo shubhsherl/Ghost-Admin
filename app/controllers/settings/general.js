@@ -21,6 +21,7 @@ export default Controller.extend({
     session: service(),
     settings: service(),
     ui: service(),
+    rc_services: service('rc_services'),
 
     availableTimezones: null,
     iconExtensions: null,
@@ -28,6 +29,7 @@ export default Controller.extend({
     imageExtensions: IMAGE_EXTENSIONS,
     imageMimeTypes: IMAGE_MIME_TYPES,
 
+    _scratchRoom: null,
     _scratchFacebook: null,
     _scratchTwitter: null,
 
@@ -100,6 +102,35 @@ export default Controller.extend({
             } else if (changedAttrs.password) {
                 settings.set('password', changedAttrs.password[0]);
             }
+        },
+
+        toggleIsAnnounced(isAnnounced) {
+            let settings = this.settings;
+
+            settings.set('isAnnounced', isAnnounced);
+
+            // Change isAuthorsRooms to false when isAnnounce is disabled
+            if (!isAnnounced) {
+                settings.set('isAuthorsRooms', false);
+            }
+        },
+
+        toggleIsAuthorsRooms(isAuthorsRooms) {
+            let settings = this.settings;
+
+            settings.set('isAuthorsRooms', isAuthorsRooms);
+        },
+
+        toggleIsComments(isComments) {
+            let settings = this.settings;
+
+            settings.set('isComments', isComments);
+        },
+
+        toggleInviteOnly(inviteOnly) {
+            let settings = this.settings;
+
+            settings.set('inviteOnly', inviteOnly);
         },
 
         toggleLeaveSettingsModal(transition) {

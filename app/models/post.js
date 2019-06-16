@@ -104,6 +104,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     updatedBy: attr('number'),
     url: attr('string'),
     uuid: attr('string'),
+    roomName: attr('string'),
+    toAnnounce: attr('boolean', {defaultValue: false}),
 
     authors: hasMany('user', {
         embedded: 'always',
