@@ -3,6 +3,7 @@ import Service, {inject as service} from '@ember/service';
 export default Service.extend({
     ajax: service(),
     ghostPaths: service(),
+    session: service(),
 
     init() {
         this._super(...arguments);
@@ -28,6 +29,18 @@ export default Service.extend({
                 user: [{
                     rc_username: username,
                     role: role
+                }]
+            }
+        });
+    },
+
+    createDiscussion(title) {
+        const url = this.get('ghostPaths.url').api('rcapi', 'discussion');
+        return this.ajax.post(url, {
+            dataType: 'json',
+            data: {
+                room: [{
+                    title: title,
                 }]
             }
         });

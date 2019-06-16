@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import Model from 'ember-data/model';
 import ValidationEngine from 'ghost-admin/mixins/validation-engine';
+import RSVP from 'rsvp';
 import attr from 'ember-data/attr';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import moment from 'moment';
@@ -112,6 +113,8 @@ export default Model.extend(Comparable, ValidationEngine, {
     uuid: attr('string'),
     roomName: attr('string'),
     roomId: attr('string'),
+    discussionRoomId: attr('string'),
+    discussionRoomName: attr('string'),
 
     authors: hasMany('user', {
         embedded: 'always',
@@ -325,7 +328,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     // the publishedAtBlog{Date/Time} strings are set separately so they can be
     // validated, grab that time if it exists and set the publishedAtUTC
     // 
-    // Add announcing room and announce.
+    // Add announcing room, announce, and commentId.
     beforeSave() {
         let publishedAtBlogTZ = this.publishedAtBlogTZ;
         let publishedAtUTC = publishedAtBlogTZ ? publishedAtBlogTZ.utc() : null;
@@ -341,5 +344,17 @@ export default Model.extend(Comparable, ValidationEngine, {
             const announce = this.get('settings.isAnnounced');
             this.set('announce', announce);
         }
+        return new RSVP.Promise((resolve) => {
+            if (this.get('settings.isComments') && this.isPublished && !this.discussionRoomId) {
+                return this.rcServices.createDiscussion(this.title).then((room) => {
+                    if (room && room.data[0].created) {
+                        this.set('discussionRoomId', room.data[0].rid);
+                        this.set('discussionRoomName', room.data[0].name);
+                    }
+                    return resolve();
+                });
+            }
+            return resolve();
+        });
     }
 });

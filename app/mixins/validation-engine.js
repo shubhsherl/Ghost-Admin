@@ -140,7 +140,9 @@ export default Mixin.create({
         // If save to the server fails, reject with server response.
         return this.validate(options).then(() => {
             if (typeof this.beforeSave === 'function') {
-                this.beforeSave();
+                return this.beforeSave().then(() => {
+                    return _super.call(this, options);
+                });
             }
             return _super.call(this, options);
         }).catch((result) => {
