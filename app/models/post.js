@@ -280,14 +280,18 @@ export default Model.extend(Comparable, ValidationEngine, {
     },
 
     tryCollaboration(user) {
+        if (!this.get('settings.canCollaborate')) {
+            return false;
+        }
+
         this.authors.pushObject(user);
         return this.rcServices.collaborate(user.get('rc_id'), this.get('id'), this)
             .then((result) => {
-                const canCollaborate = result.data[0].collaborate;
-                if (!canCollaborate) {
+                const collaborated = result.data[0].collaborate;
+                if (!collaborated) {
                     this.authors.removeObjects(user);
                 }
-                return canCollaborate;
+                return collaborated;
             });
     },
 
