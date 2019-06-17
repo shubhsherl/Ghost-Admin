@@ -54,7 +54,7 @@ export default Service.extend({
                 collaboration: [{
                     rc_id: userId,
                     post_id: postId,
-                    post: post 
+                    post: post
                 }]
             }
         });
