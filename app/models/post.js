@@ -116,7 +116,6 @@ export default Model.extend(Comparable, ValidationEngine, {
     roomId: attr('string'),
     discussionRoomId: attr('string'),
     discussionRoomName: attr('string'),
-    toCollaborate: attr('boolean', {defaultValue: false}),
 
     authors: hasMany('user', {
         embedded: 'always',
