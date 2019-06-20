@@ -309,7 +309,6 @@
                     <label class="checkbox" for="settings-invite-only">
                         <input
                             type="checkbox"
-                            disabled={{settings.canCollaborate}}
                             checked={{settings.inviteOnly}}
                             id="settings-invite-only"
                             onclick={{action "toggleInviteOnly" value="target.checked"}}
