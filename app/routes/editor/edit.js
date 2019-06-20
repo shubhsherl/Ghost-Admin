@@ -46,6 +46,7 @@ export default AuthenticatedRoute.extend({
                     if (!res) {
                         return this.replaceWith(returnRoute);
                     }
+                    return this.refresh();
                 });
             }
 
