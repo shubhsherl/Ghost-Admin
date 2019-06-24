@@ -4,7 +4,7 @@ import {isBlank} from '@ember/utils';
 
 export default BaseValidator.create({
     properties: ['username', 'role'],
-    
+
     username(model) {
         let username = model.get('username');
 

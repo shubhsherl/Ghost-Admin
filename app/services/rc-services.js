@@ -40,7 +40,7 @@ export default Service.extend({
             dataType: 'json',
             data: {
                 room: [{
-                    title: title,
+                    title: title
                 }]
             }
         });

@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import Model from 'ember-data/model';
-import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 import RSVP from 'rsvp';
+import ValidationEngine from 'ghost-admin/mixins/validation-engine';
 import attr from 'ember-data/attr';
 import boundOneWay from 'ghost-admin/utils/bound-one-way';
 import moment from 'moment';
@@ -349,7 +349,7 @@ export default Model.extend(Comparable, ValidationEngine, {
                 return this.rcServices.createDiscussion(this.title).then((room) => {
                     if (room && room.data[0].created) {
                         this.set('discussionRoomId', room.data[0].rid);
-                        this.set('discussionRoomName', room.data[0].name);
+                        this.set('discussionRoomName', room.data[0].roomname);
                     }
                     return resolve();
                 });
