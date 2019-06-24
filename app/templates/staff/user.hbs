@@ -124,6 +124,7 @@
                     {{gh-text-input
                         id="user-name"
                         class="user-name"
+                        readonly=true
                         placeholder="Full Name"
                         autocorrect="off"
                         value=(readonly user.name)
@@ -164,6 +165,7 @@
                             type="email"
                             id="user-email"
                             name="email"
+                            readonly=true
                             placeholder="Email Address"
                             autocapitalize="off"
                             autocorrect="off"
@@ -279,65 +281,5 @@
             </fieldset>
 
         </form> {{! user details form }}
-
-        {{!-- If an administrator is viewing Owner's profile then hide inputs for change password --}}
-        {{#if canChangePassword}}
-            <form id="password-reset" class="user-profile" novalidate="novalidate" autocomplete="off" {{action (perform user.saveNewPassword) on="submit"}}>
-                <fieldset>
-                    {{#if isOwnProfile}}
-                        {{#gh-form-group errors=user.errors hasValidated=user.hasValidated property="password"}}
-                            <label for="user-password-old">Old Password</label>
-                            {{gh-text-input
-                                type="password"
-                                id="user-password-old"
-                                autocomplete="current-password"
-                                value=(readonly user.password)
-                                input=(action "updatePassword" value="target.value")
-                                keyEvents=(hash
-                                    Enter=(action (perform user.saveNewPassword))
-                                )
-                                data-test-old-pass-input=true
-                            }}
-                            {{gh-error-message errors=user.errors property="password" data-test-error="user-old-pass"}}
-                        {{/gh-form-group}}
-                    {{/if}}
-
-                    {{#gh-form-group errors=user.errors hasValidated=user.hasValidated property="newPassword"}}
-                        <label for="user-password-new">New Password</label>
-                        {{gh-text-input
-                            value=(readonly user.newPassword)
-                            type="password"
-                            autocomplete="new-password"
-                            id="user-password-new"
-                            input=(action "updateNewPassword" value="target.value")
-                            keyEvents=(hash
-                                Enter=(action (perform user.saveNewPassword))
-                            )
-                            data-test-new-pass-input=true
-                        }}
-                        {{gh-error-message errors=user.errors property="newPassword" data-test-error="user-new-pass"}}
-                    {{/gh-form-group}}
-
-                    {{#gh-form-group errors=user.errors hasValidated=user.hasValidated property="ne2Password"}}
-                        <label for="user-new-password-verification">Verify Password</label>
-                        {{gh-text-input
-                            value=(readonly user.ne2Password)
-                            type="password"
-                            id="user-new-password-verification"
-                            input=(action "updateNe2Password" value="target.value")
-                            keyEvents=(hash
-                                Enter=(action (perform user.saveNewPassword))
-                            )
-                            data-test-ne2-pass-input=true
-                        }}
-                        {{gh-error-message errors=user.errors property="ne2Password" data-test-error="user-ne2-pass"}}
-                    {{/gh-form-group}}
-
-                    <div class="form-group">
-                        {{gh-task-button "Change Password" class="gh-btn gh-btn-red gh-btn-icon button-change-password" task=user.saveNewPassword data-test-save-pw-button=true}}
-                    </div>
-                </fieldset>
-            </form> {{! change password form }}
-        {{/if}}
     </div>
 </section>

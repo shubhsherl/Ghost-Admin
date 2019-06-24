@@ -21,6 +21,7 @@ export default Controller.extend({
     session: service(),
     settings: service(),
     ui: service(),
+    rcServices: service('rc_services'),
 
     availableTimezones: null,
     iconExtensions: null,
@@ -28,12 +29,14 @@ export default Controller.extend({
     imageExtensions: IMAGE_EXTENSIONS,
     imageMimeTypes: IMAGE_MIME_TYPES,
 
+    _scratchRoom: null,
     _scratchFacebook: null,
     _scratchTwitter: null,
 
     init() {
         this._super(...arguments);
         this.iconExtensions = ICON_EXTENSIONS;
+        this._scratchRoom = this.get('settings.roomName');
     },
 
     privateRSSUrl: computed('config.blogUrl', 'settings.publicHash', function () {
@@ -102,6 +105,35 @@ export default Controller.extend({
             }
         },
 
+        toggleIsAnnounced(isAnnounced) {
+            let settings = this.settings;
+
+            settings.set('isAnnounced', isAnnounced);
+
+            // Change isAuthorsRooms to false when isAnnounce is disabled
+            if (!isAnnounced) {
+                settings.set('isAuthorsRooms', false);
+            }
+        },
+
+        toggleIsAuthorsRooms(isAuthorsRooms) {
+            let settings = this.settings;
+
+            settings.set('isAuthorsRooms', isAuthorsRooms);
+        },
+
+        toggleIsComments(isComments) {
+            let settings = this.settings;
+
+            settings.set('isComments', isComments);
+        },
+
+        toggleInviteOnly(inviteOnly) {
+            let settings = this.settings;
+
+            settings.set('inviteOnly', inviteOnly);
+        },
+
         toggleLeaveSettingsModal(transition) {
             let leaveTransition = this.leaveSettingsTransition;
 
@@ -139,6 +171,42 @@ export default Controller.extend({
             settings.rollbackAttributes();
 
             return transition.retry();
+        },
+
+        validateRoom() {
+            let newRoom = this._scratchRoom;
+            let oldRoom = this.get('settings.roomName');
+            let errMessage = 'Room does not exist';
+
+            // reset errors and validation
+            this.get('settings.errors').remove('room');
+            this.get('settings.hasValidated').removeObject('room');
+
+            if (!newRoom) {
+                newRoom = oldRoom;
+            }
+            this.rcServices.getRoom(newRoom)
+                .then((room) => {
+                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
+
+                    if (!existingRCRoom) {
+                        throw errMessage;
+                    }
+                    run.schedule('afterRender', this, function () {
+                        this.set('settings.roomName', newRoom);
+                        this.set('settings.roomId', room.data[0].rid);
+                    });
+                })
+                .catch((e) => {
+                    if (e === errMessage){
+                        this.get('settings.errors').add('room', errMessage);
+                        return;
+                    }
+                    throw e;
+                })
+                .finally(() => {
+                    this.get('settings.hasValidated').pushObject('room');
+                });
         },
 
         validateFacebookUrl() {
