@@ -25,6 +25,6 @@ export default Controller.extend({
         }
 
         return (router.currentRouteName !== 'error404' || session.isAuthenticated)
-                && !router.currentRouteName.match(/(signin|signup|setup|reset)/);
+                && !router.currentRouteName.match(/(signin|setup)/);
     })
 });
