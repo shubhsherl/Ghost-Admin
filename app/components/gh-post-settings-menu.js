@@ -26,6 +26,8 @@ export default Component.extend(SettingsMenuMixin, {
 
     _showSettingsMenu: false,
     _showThrobbers: false,
+    // discussion room type: false => 'c' OR 'channel', true => 'p' OR 'group'
+    _dRoomType: false,
 
     canonicalUrlScratch: alias('post.canonicalUrlScratch'),
     customExcerptScratch: alias('post.customExcerptScratch'),
@@ -40,8 +42,10 @@ export default Component.extend(SettingsMenuMixin, {
     rcDescriptionScratch: alias('post.rcDescriptionScratch'),
     rcTitleScratch: alias('post.rcTitleScratch'),
     roomNameScratch: alias('post.roomNameScratch'),
+    discussionRoomType: alias('post.discussionRoomType'),
     slugValue: boundOneWay('post.slug'),
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
+    allowComments: boundOneWay('settings.isComments'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
     announce: boundOneWay('allowAnnouncements'),
     
@@ -188,6 +192,20 @@ export default Component.extend(SettingsMenuMixin, {
             this.toggleProperty('announce');
             post.set('announce', !announce);
             post.set('announceChanged', true);
+        },
+
+        /**
+         * triggered by user manually changing comment-type-setting
+         */
+        toggleCommentType() {
+            let post = this.post;
+            let dRoomType = this._dRoomType;
+            this.toggleProperty('_dRoomType');
+            if (!dRoomType) {
+                post.set('discussionRoomType', 'p');
+            } else {
+                post.set('discussionRoomType', 'c');
+            }
         },
 
         /**

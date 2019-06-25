@@ -138,6 +138,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     // HACK: used for validation so that date/time can be validated based on
     // eventual status rather than current status
     statusScratch: null,
+    discussionRoomType: 'c',
 
     // For use by date/time pickers - will be validated then converted to UTC
     // on save. Updated by an observer whenever publishedAtUTC changes.
@@ -346,7 +347,7 @@ export default Model.extend(Comparable, ValidationEngine, {
         }
         return new RSVP.Promise((resolve) => {
             if (this.get('settings.isComments') && this.isPublished && !this.discussionRoomId) {
-                return this.rcServices.createDiscussion(this.title).then((room) => {
+                return this.rcServices.createDiscussion(this.title, this.discussionRoomType).then((room) => {
                     if (room && room.data[0].created) {
                         this.set('discussionRoomId', room.data[0].rid);
                         this.set('discussionRoomName', room.data[0].name);

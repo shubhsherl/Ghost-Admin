@@ -80,6 +80,22 @@
                 </div>
                 {{/if}}
 
+                {{#if allowComments}}
+                <div class="form-group for-checkbox">
+                        <label class="checkbox" for="comment" {{action "toggleCommentType" bubbles="false"}}>
+                        <input
+                            type="checkbox"
+                            checked={{_dRoomType}}
+                            class="gh-input post-settings-commetn-type"
+                            onclick={{action (mut _dRoomType) value="target.checked"}}
+                            data-test-checkbox="_dRoomType"
+                        >
+                        <span class="input-toggle-component"></span>
+                        <p>Create Private Discussion Room</p>
+                        </label>
+                </div>
+                {{/if}}
+
                 <div class="form-group">
                     {{#if (or post.isDraft post.isPublished post.pastScheduledTime)}}
                         <label>Publish Date</label>

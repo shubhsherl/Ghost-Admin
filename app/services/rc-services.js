@@ -34,13 +34,14 @@ export default Service.extend({
         });
     },
 
-    createDiscussion(title) {
+    createDiscussion(title, type) {
         const url = this.get('ghostPaths.url').api('rcapi', 'discussion');
         return this.ajax.post(url, {
             dataType: 'json',
             data: {
                 room: [{
                     title: title,
+                    type: type
                 }]
             }
         });
