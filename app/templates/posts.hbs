@@ -25,7 +25,7 @@
             {{/power-select}}
             {{/unless}}
 
-            {{#unless session.user.isAuthorOrContributor}}
+            {{#unless session.user.isContributor}}
             {{#power-select
                 selected=selectedAuthor
                 options=availableAuthors
@@ -91,6 +91,7 @@
             {{#each postsInfinityModel as |post|}}
                 {{gh-posts-list-item
                     post=post
+                    currentUserId=currentUserId
                     onDoubleClick=(action "openEditor")
                     data-test-post-id=post.id}}
             {{else}}

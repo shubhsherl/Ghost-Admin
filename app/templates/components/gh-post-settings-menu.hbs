@@ -122,7 +122,8 @@
                     {{gh-error-message errors=post.errors property="customExcerpt" data-test-error="custom-excerpt"}}
                 {{/gh-form-group}}
 
-                {{#unless session.user.isAuthorOrContributor}}
+                {{!-- Author can add other authors, but contributor cannot --}}
+                {{#unless session.user.isContributor}}
                     {{#gh-form-group class="for-select" errors=post.errors hasValidated=post.hasValidated property="authors" data-test-input="authors"}}
                         <label for="author-list">Authors</label>
                         {{gh-psm-authors-input selectedAuthors=post.authors updateAuthors=(action "changeAuthors") triggerId="author-list"}}

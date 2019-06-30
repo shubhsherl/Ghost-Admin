@@ -23,12 +23,15 @@ export default Service.extend({
 
     addUser(username, role) {
         let authUrl = this.get('ghostPaths.url').api('authentication', 'adduser');
+        const pid = this.get('session.user.id');
         return this.ajax.post(authUrl, {
             dataType: 'json',
+            user: {id: '1'},
             data: {
                 user: [{
                     rc_username: username,
-                    role: role
+                    role: role,
+                    created_by: pid
                 }]
             }
         });

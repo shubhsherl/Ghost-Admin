@@ -1,7 +1,11 @@
 <h3 class="gh-content-entry-title">
-    {{#link-to "editor.edit" this.post.displayName this.post.id class="permalink" title="Edit this post"}}
-        {{this.post.title}}
-    {{/link-to}}
+    {{#if this.canEdit}}
+        {{#link-to "editor.edit" this.post.displayName this.post.id class="permalink" title="Edit this post"}}
+            {{this.post.title}}
+        {{/link-to}}
+    {{else}}
+        <a class="permalink" target="_blank" href="{{post.previewUrl}}">{{this.post.title}}</a>
+    {{/if}}
 </h3>
 <p>{{this.subText}}</p>
 

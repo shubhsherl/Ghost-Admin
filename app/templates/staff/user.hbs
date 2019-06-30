@@ -181,6 +181,13 @@
                     <p>Used for notifications</p>
                 {{/gh-form-group}}
 
+                {{#if user.isContributor}}
+                    {{#gh-form-group errors=user.errors hasValidated=user.hasValidated property="email"}}
+                        <label for="user-parent">Parent Editor</label>
+                        <span>{{parentUser.name}}</span>
+                    {{/gh-form-group}}
+                {{/if}}
+
                 {{#if rolesDropdownIsVisible}}
                     <div class="form-group">
                         <label for="user-role">Role</label>

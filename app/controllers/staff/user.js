@@ -18,6 +18,7 @@ export default Controller.extend({
     notifications: service(),
     session: service(),
     slugGenerator: service(),
+    store: service(),
 
     leaveSettingsTransition: null,
     dirtyAttributes: false,
@@ -65,6 +66,10 @@ export default Controller.extend({
 
     roles: computed(function () {
         return this.store.query('role', {permissions: 'assign'});
+    }),
+
+    parentUser: computed('user.createdBy', function() {
+        return this.store.queryRecord('user', {id: this.get('user.createdBy')});
     }),
 
     actions: {

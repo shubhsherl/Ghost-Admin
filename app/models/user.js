@@ -28,7 +28,8 @@ export default Model.extend(ValidationEngine, {
     metaDescription: attr('string'),
     lastLoginUTC: attr('moment-utc'),
     createdAtUTC: attr('moment-utc'),
-    createdBy: attr('number'),
+    // CreatedBy will be updated from server
+    createdBy: attr('string'),
     updatedAtUTC: attr('moment-utc'),
     updatedBy: attr('number'),
     roles: hasMany('role', {
