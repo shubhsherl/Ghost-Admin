@@ -12,6 +12,8 @@ export default Model.extend(ValidationEngine, {
     validationType: 'user',
 
     name: attr('string'),
+    rc_id: attr('string'),
+    rc_username: attr('string'),
     slug: attr('string'),
     email: attr('string'),
     profileImage: attr('string'),
