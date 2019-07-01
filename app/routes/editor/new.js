@@ -15,8 +15,9 @@ export default AuthenticatedRoute.extend({
                 const pid = user.get('createdBy');
                 return this.store.queryRecord('user', {id: pid})
                     .then(parent => {
-                        users.push(parent);
-                        users.push(user);
+                        if (parent) {
+                            users.push(parent);
+                        }
                         return this.store.createRecord(modelName, {authors: users});
                 });
             }

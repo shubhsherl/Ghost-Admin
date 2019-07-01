@@ -14,10 +14,11 @@ export default AuthenticatedRoute.extend(CurrentUserSettings, {
             let isOwnProfile = user.get('id') === currentUser.get('id');
             let isAuthorOrContributor = currentUser.get('isAuthorOrContributor');
             let isEditor = currentUser.get('isEditor');
+            let isParent = user.get('createdBy') === currentUser.get('id');
 
             if (isAuthorOrContributor && !isOwnProfile) {
                 this.transitionTo('staff.user', currentUser);
-            } else if (isEditor && !isOwnProfile && !user.get('isAuthorOrContributor')) {
+            } else if (isEditor && !isOwnProfile && !isParent) {
                 this.transitionTo('staff');
             }
         });

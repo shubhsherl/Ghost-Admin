@@ -16,7 +16,7 @@ export default ModalComponent.extend(ValidationEngine, {
 
     role: null,
     roles: null,
-    authorRole: null,
+    defaultRole: null,
 
     validationType: 'inviteUser',
 
@@ -85,13 +85,14 @@ export default ModalComponent.extend(ValidationEngine, {
 
     fetchRoles: task(function * () {
         let roles = yield this.store.query('role', {permissions: 'assign'});
-        let authorRole = roles.findBy('name', 'Author');
+        let defaultRole = roles.findBy('name', 'Author');
+        defaultRole = defaultRole ? defaultRole : roles.findBy('name', 'Contributor');
 
         this.set('roles', roles);
-        this.set('authorRole', authorRole);
+        this.set('defaultRole', defaultRole);
 
         if (!this.role) {
-            this.set('role', authorRole);
+            this.set('role', defaultRole);
         }
     }),
 
