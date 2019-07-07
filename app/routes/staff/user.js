@@ -4,7 +4,7 @@ import CurrentUserSettings from 'ghost-admin/mixins/current-user-settings';
 
 export default AuthenticatedRoute.extend(CurrentUserSettings, {
     model(params) {
-        return this.store.queryRecord('user', {slug: params.user_slug, include: 'count.posts'});
+        return this.store.queryRecord('user', {slug: params.user_slug, include: 'count.posts,parents'});
     },
 
     afterModel(user) {
@@ -14,7 +14,7 @@ export default AuthenticatedRoute.extend(CurrentUserSettings, {
             let isOwnProfile = user.get('id') === currentUser.get('id');
             let isAuthorOrContributor = currentUser.get('isAuthorOrContributor');
             let isEditor = currentUser.get('isEditor');
-            let isParent = user.get('createdBy') === currentUser.get('id');
+            let isParent = user.get('parentId') === currentUser.get('id');
 
             if (isAuthorOrContributor && !isOwnProfile) {
                 this.transitionTo('staff.user', currentUser);

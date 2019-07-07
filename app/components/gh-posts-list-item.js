@@ -32,7 +32,7 @@ export default Component.extend({
         return authors.map(author => author.get('name') || author.get('email')).join(', ');
     }),
 
-    canEdit: computed('post.authors.[]', 'currentUserId', function() {
+    canEdit: computed('post.authors.[]', 'currentUserId', function () {
         let authors = this.get('post.authors');
         authors = authors.map(author => author.get('id'));
         return authors.includes(this.currentUserId);

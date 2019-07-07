@@ -59,9 +59,9 @@ export default Controller.extend({
     }),
 
     availableRoles: computed('_availableRoles.[]', 'currentUser', function () {
-        let options = this.get('_availableRoles')
+        let options = this.get('_availableRoles');
         if (this.get('currentUser').isAuthorOrContributor) {
-            return options.filter((role) => role.value !== 'Contributors');
+            return options.filter(role => role.value !== 'Contributors');
         }
         return options;
     }),
@@ -79,25 +79,25 @@ export default Controller.extend({
         return this.store.peekAll('user');
     }),
 
-    activeUsers: computed('allUsers.@each.{status,roles,createdBy}', 'role', 'currentUser', function () {
+    activeUsers: computed('allUsers.@each.{status,roles,parentId}', 'role', 'currentUser', function () {
         let role = this.role;
         return this.allUsers.filter((user) => {
             let isParent = false;
             if (role === 'Contributors') {
-                isParent = this.currentUser.get('id') === user.createdBy && user.roles.get('firstObject').name === 'Contributor';
+                isParent = this.currentUser.get('id') === user.parentId && user.roles.get('firstObject').name === 'Contributor';
             }
-            return user.status !== 'inactive' && (role ? isParent || user.roles.get('firstObject').name ===  role : true);
+            return user.status !== 'inactive' && (role ? isParent || user.roles.get('firstObject').name === role : true);
         });
     }),
 
-    suspendedUsers: computed('allUsers.@each.{status,roles,createdBy}', 'role','currentUser', function () {
+    suspendedUsers: computed('allUsers.@each.{status,roles,parentId}', 'role','currentUser', function () {
         let role = this.role;
         return this.allUsers.filter((user) => {
             let isParent = false;
             if (role === 'Contributors') {
-                isParent = this.currentUser.get('id') === user.createdBy && user.roles.get('firstObject').name === 'Contributor';
+                isParent = this.currentUser.get('id') === user.parentId && user.roles.get('firstObject').name === 'Contributor';
             }
-            return user.status === 'inactive' && (role ? isParent || user.roles.get('firstObject').name ===  role : true);
+            return user.status === 'inactive' && (role ? isParent || user.roles.get('firstObject').name === role : true);
         });
     }),
 
@@ -107,7 +107,7 @@ export default Controller.extend({
         },
         changeRole(role) {
             this.set('role', get(role, 'value'));
-        },
+        }
     },
 
     backgroundUpdate: task(function* () {
@@ -122,7 +122,7 @@ export default Controller.extend({
     }),
 
     fetchUsers: task(function* () {
-        yield this.store.query('user', {limit: 'all'});
+        yield this.store.query('user', {limit: 'all', include: 'parents'});
     }),
 
     fetchInvites: task(function* () {

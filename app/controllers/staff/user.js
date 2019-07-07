@@ -68,8 +68,8 @@ export default Controller.extend({
         return this.store.query('role', {permissions: 'assign'});
     }),
 
-    parentUser: computed('user.createdBy', function() {
-        return this.store.queryRecord('user', {id: this.get('user.createdBy')});
+    parentUser: computed('user.parentId', function () {
+        return this.store.queryRecord('user', {id: this.get('user.parentId')});
     }),
 
     actions: {
