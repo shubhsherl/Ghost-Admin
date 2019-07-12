@@ -190,6 +190,135 @@
             {{/gh-uploader}}
         </div>
 
+        <div class="gh-setting-header">Rocket-Chat</div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Rocket.Chat server Url</div>
+                <div class="gh-setting-desc">Set the url where rocket chat server is running</div>
+                {{#liquid-if chatServerUrl}}
+                <div class="gh-setting-content-extended">
+                    {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="serverUrl"}}
+                        {{gh-text-input
+                            value=(readonly settings.serverUrl)
+                            input=(action (mut settings.serverUrl) value="target.value")
+                            focus-out=(action "validate" target=settings)
+                            data-test-server-url-input=true
+                        }}
+                        {{gh-error-message errors=settings.errors property="serverUrl"}}
+                        <p>All the api call will use this url. Verify it before changing.</p>
+                    {{/gh-form-group}}
+                </div>
+                {{/liquid-if}}
+            </div>
+            <div class="gh-setting-action">
+                <button type="button" class="gh-btn gh-btn-hover-blue" {{action (toggle "chatServerUrl" this)}} data-test-toggle-server-url><span>{{if chatServerUrl "Close" "Expand"}}</span></button>
+            </div>
+        </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Article Announcement</div>
+                <div class="gh-setting-desc">
+                    Allow the announcement of articles when publish.
+                </div>
+
+                {{#if settings.isAnnounced}}
+                    <div class="gh-setting-content-extended">
+                        {{#gh-form-group errors=settings.errors hasValidated=settings.hasValidated property="room"}}
+                        {{gh-text-input
+                            value=(readonly settings.roomName)
+                            input=(action (mut _scratchRoom) value="target.value")
+                            focus-out=(action "validateRoom")
+                            data-test-room-input=true
+                        }}
+                        {{gh-error-message errors=settings.errors property="room" data-test-room-error=true}}
+                        <p>Channel name for announcement</p>
+                    {{/gh-form-group}}
+                    </div>
+                {{/if}}
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-announced">
+                        <input
+                            type="checkbox"
+                            checked={{settings.isAnnounced}}
+                            id="settings-announced"
+                            onclick={{action "toggleIsAnnounced" value="target.checked"}}
+                            data-test-announced-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Authors Room for announcement</div>
+                <div class="gh-setting-desc">
+                    Allow authors to change the room for announcing their articles.
+                </div>
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-authors-rooms">
+                        <input
+                            type="checkbox"
+                            disabled={{not settings.isAnnounced}}
+                            checked={{settings.isAuthorsRooms}}
+                            id="settings-authors-rooms"
+                            onclick={{action "toggleIsAuthorsRooms" value="target.checked"}}
+                            data-test-authors-rooms-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Comments on Articles</div>
+                <div class="gh-setting-desc">
+                    Create a Discussion in RC on Articles when published, and show on footer.
+                </div>
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-comments">
+                        <input
+                            type="checkbox"
+                            checked={{settings.isComment}}
+                            id="settings-comments"
+                            onclick={{action "toggleIsComments" value="target.checked"}}
+                            data-test-comments-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="gh-setting">
+            <div class="gh-setting-content">
+                <div class="gh-setting-title">Only Owner, Admin can add users</div>
+                <div class="gh-setting-desc">
+                    If enabled, then only invited users can access.
+                </div>
+            </div>
+            <div class="gh-setting-action">
+                <div class="for-checkbox">
+                    <label class="checkbox" for="settings-invite-only">
+                        <input
+                            type="checkbox"
+                            checked={{settings.inviteOnly}}
+                            id="settings-invite-only"
+                            onclick={{action "toggleInviteOnly" value="target.checked"}}
+                            data-test-invite-only-checkbox
+                        >
+                        <span class="input-toggle-component"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <div class="gh-setting-header">Social accounts</div>
         <div class="gh-setting">
             <div class="gh-setting-content">

@@ -97,6 +97,7 @@ export default Controller.extend({
     }),
 
     _availableAuthors: computed(function () {
+        this.store.query('user', {limit: 'all'});
         return this.get('store').peekAll('user');
     }),
 
@@ -114,6 +115,10 @@ export default Controller.extend({
         let authors = this.get('availableAuthors');
 
         return authors.findBy('slug', author);
+    }),
+
+    currentUserId: computed('session.user.id', function () {
+        return this.get('session.user.id');
     }),
 
     actions: {

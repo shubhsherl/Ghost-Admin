@@ -14,13 +14,15 @@ export default Component.extend({
 
     post: null,
     active: false,
+    currentUserId: null,
 
     // closure actions
     onClick() {},
     onDoubleClick() {},
 
     isFeatured: alias('post.featured'),
-    isPage: alias('post.page'),
+    // isPage: alias('post.page'),
+    isPage: equal('post.displayName', 'page'),
     isDraft: equal('post.status', 'draft'),
     isPublished: equal('post.status', 'published'),
     isScheduled: equal('post.status', 'scheduled'),
@@ -29,6 +31,12 @@ export default Component.extend({
         let authors = this.get('post.authors');
 
         return authors.map(author => author.get('name') || author.get('email')).join(', ');
+    }),
+
+    canEdit: computed('post.authors.[]', 'currentUserId', function () {
+        let authors = this.get('post.authors');
+        authors = authors.map(author => author.get('id'));
+        return authors.includes(this.currentUserId);
     }),
 
     subText: computed('post.{excerpt,customExcerpt,metaDescription}', function () {
