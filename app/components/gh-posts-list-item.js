@@ -21,7 +21,8 @@ export default Component.extend({
     onDoubleClick() {},
 
     isFeatured: alias('post.featured'),
-    isPage: alias('post.page'),
+    // isPage: alias('post.page'),
+    isPage: equal('post.displayName', 'page'),
     isDraft: equal('post.status', 'draft'),
     isPublished: equal('post.status', 'published'),
     isScheduled: equal('post.status', 'scheduled'),

@@ -91,6 +91,7 @@
             {{#each postsInfinityModel as |page|}}
                 {{gh-posts-list-item
                     post=page
+                    currentUserId=currentUserId
                     onDoubleClick=(action "openEditor")
                     data-test-page-id=page.id}}
             {{else}}

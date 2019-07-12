@@ -56,6 +56,7 @@ Router.map(function () {
     this.route('settings.integrations.amp', {path: '/settings/integrations/amp'});
     this.route('settings.integrations.unsplash', {path: '/settings/integrations/unsplash'});
     this.route('settings.integrations.zapier', {path: '/settings/integrations/zapier'});
+    this.route('settings.integrations.search', {path: '/settings/integrations/search'});
 
     this.route('members');
     this.route('member', {path: '/members/:member_id'});
