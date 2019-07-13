@@ -14,6 +14,7 @@ export default Component.extend({
 
     post: null,
     active: false,
+    currentUserId: null,
 
     // closure actions
     onClick() {},
@@ -29,6 +30,12 @@ export default Component.extend({
         let authors = this.get('post.authors');
 
         return authors.map(author => author.get('name') || author.get('email')).join(', ');
+    }),
+
+    canEdit: computed('post.authors.[]', 'currentUserId', function () {
+        let authors = this.get('post.authors');
+        authors = authors.map(author => author.get('id'));
+        return authors.includes(this.currentUserId);
     }),
 
     subText: computed('post.{excerpt,customExcerpt,metaDescription}', function () {

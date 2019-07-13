@@ -44,10 +44,7 @@ export default AuthenticatedRoute.extend({
                 filterParams.featured = true;
             }
 
-            if (user.isAuthor) {
-                // authors can only view their own posts
-                filterParams.authors = user.slug;
-            } else if (user.isContributor) {
+            if (user.isContributor) {
                 // Contributors can only view their own draft posts
                 filterParams.authors = user.slug;
                 filterParams.status = 'draft';
