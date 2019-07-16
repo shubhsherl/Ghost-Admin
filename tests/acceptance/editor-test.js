@@ -550,7 +550,7 @@ describe('Acceptance: Editor', function () {
             let authorRole = this.server.create('role', {name: 'Author'});
             let user1 = this.server.create('user', {name: 'Primary', roles: [adminRole]});
             this.server.create('user', {name: 'Waldo', roles: [authorRole]});
-            this.server.create('post', {authors: [user1]});
+            this.server.create('post', {authors: [user1, author]});
 
             await visit('/editor/post/1');
 
@@ -561,16 +561,16 @@ describe('Acceptance: Editor', function () {
 
             let tokens = findAll('[data-test-input="authors"] .ember-power-select-multiple-option');
 
-            expect(tokens.length).to.equal(1);
+            expect(tokens.length).to.equal(2);
             expect(tokens[0].textContent.trim()).to.have.string('Primary');
 
             await selectChoose('[data-test-input="authors"]', 'Waldo');
 
             let savedAuthors = this.server.schema.posts.find('1').authors.models;
 
-            expect(savedAuthors.length).to.equal(2);
+            expect(savedAuthors.length).to.equal(3);
             expect(savedAuthors[0].name).to.equal('Primary');
-            expect(savedAuthors[1].name).to.equal('Waldo');
+            expect(savedAuthors[2].name).to.equal('Waldo');
         });
 
         it('autosaves when title loses focus', async function () {

@@ -44,7 +44,7 @@ export default Service.extend({
             data: {
                 room: [{
                     title,
-                    type,
+                    type
                 }]
             }
         });

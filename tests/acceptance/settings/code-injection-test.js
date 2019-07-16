@@ -78,8 +78,8 @@ describe('Acceptance: Settings - Code-Injection', function () {
             expect(findAll('#ghost-head .CodeMirror').length, 'ghost head codemirror element').to.equal(1);
             expect(find('#ghost-head .CodeMirror'), 'ghost head editor theme').to.have.class('cm-s-xq-light');
 
-            expect(findAll('#ghost-foot .CodeMirror').length, 'ghost head codemirror element').to.equal(1);
-            expect(find('#ghost-foot .CodeMirror'), 'ghost head editor theme').to.have.class('cm-s-xq-light');
+            expect(findAll('#ghost-foot .CodeMirror').length, 'ghost foot codemirror element').to.equal(1);
+            expect(find('#ghost-foot .CodeMirror'), 'ghost foot editor theme').to.have.class('cm-s-xq-light');
 
             await click('[data-test-save-button]');
 

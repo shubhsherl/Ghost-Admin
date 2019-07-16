@@ -32,7 +32,7 @@ export default AuthenticatedRoute.extend({
     model(params) {
         return this.session.user.then((user) => {
             let queryParams = {};
-            let filterParams = {tag: params.tag};
+            let filterParams = {tag: params.tag, authors: user.slug};
             let paginationParams = {
                 perPageParam: 'limit',
                 totalPagesParam: 'meta.pagination.pages'
@@ -46,10 +46,7 @@ export default AuthenticatedRoute.extend({
 
             if (user.isContributor) {
                 // Contributors can only view their own draft posts
-                filterParams.authors = user.slug;
                 filterParams.status = 'draft';
-            } else if (params.author) {
-                filterParams.authors = params.author;
             }
 
             let filter = this._filterString(filterParams);

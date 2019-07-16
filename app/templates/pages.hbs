@@ -25,25 +25,6 @@
             {{/power-select}}
             {{/unless}}
 
-            {{#unless session.user.isAuthorOrContributor}}
-            {{#power-select
-                selected=selectedAuthor
-                options=availableAuthors
-                searchField="name"
-                onchange=(action "changeAuthor")
-                tagName="div"
-                classNames="gh-contentfilter-menu gh-contentfilter-author"
-                triggerClass="gh-contentfilter-menu-trigger"
-                dropdownClass="gh-contentfilter-menu-dropdown"
-                searchPlaceholder="Search authors"
-                matchTriggerWidth=false
-                data-test-author-select=true
-                as |author|
-            }}
-                {{author.name}}
-            {{/power-select}}
-            {{/unless}}
-
             {{#unless session.user.isContributor}}
             {{#power-select
                 selected=selectedTag

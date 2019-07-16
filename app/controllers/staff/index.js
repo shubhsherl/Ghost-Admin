@@ -102,10 +102,9 @@ export default Controller.extend({
 
     backgroundUpdate: task(function* () {
         let users = this.fetchUsers.perform();
-        let invites = this.fetchInvites.perform();
 
         try {
-            yield RSVP.all([users, invites]);
+            yield RSVP.all([users]);
         } catch (error) {
             this.send('error', error);
         }
@@ -113,5 +112,5 @@ export default Controller.extend({
 
     fetchUsers: task(function* () {
         yield this.store.query('user', {limit: 'all', include: 'parents'});
-    }),
+    })
 });
