@@ -116,6 +116,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     roomId: attr('string'),
     discussionRoomId: attr('string'),
     discussionRoomName: attr('string'),
+    discussionRoomType: attr('string', {defaultValue: 'c'}),
 
     authors: hasMany('user', {
         embedded: 'always',
@@ -362,11 +363,12 @@ export default Model.extend(Comparable, ValidationEngine, {
             this.set('announce', announce);
         }
         return new RSVP.Promise((resolve) => {
-            if (this.get('settings.isComments') && this.isPublished && !this.discussionRoomId) {
-                return this.rcServices.createDiscussion(this.title).then((room) => {
+            if (this.get('settings.isComments') && this.isPublished && !this.discussionRoomId && this.displayName === 'post') {
+                return this.rcServices.createDiscussion(this.title, this.discussionRoomType).then((room) => {
                     if (room && room.data[0].created) {
                         this.set('discussionRoomId', room.data[0].rid);
                         this.set('discussionRoomName', room.data[0].roomname);
+                        this.set('discussionRoomType', room.data[0].type);
                     }
                     return resolve();
                 });

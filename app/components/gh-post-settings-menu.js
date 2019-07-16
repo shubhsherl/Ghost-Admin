@@ -26,6 +26,7 @@ export default Component.extend(SettingsMenuMixin, {
 
     _showSettingsMenu: false,
     _showThrobbers: false,
+    privateComments: false,
 
     canonicalUrlScratch: alias('post.canonicalUrlScratch'),
     customExcerptScratch: alias('post.customExcerptScratch'),
@@ -44,9 +45,9 @@ export default Component.extend(SettingsMenuMixin, {
     allowAnnouncements: boundOneWay('settings.isAnnounced'),
     allowCollaboration: boundOneWay('settings.canCollaborate'),
     allowAuthorRooms: boundOneWay('settings.isAuthorsRooms'),
+    allowComments: boundOneWay('settings.isComments'),
     announce: boundOneWay('allowAnnouncements'),
     collaborate: boundOneWay('post.collaborate'),
-    
     
     roomName: or('roomNameScratch', 'settings.roomName'),
     facebookDescription: or('ogDescriptionScratch', 'customExcerptScratch', 'seoDescription'),
@@ -191,6 +192,13 @@ export default Component.extend(SettingsMenuMixin, {
             this.toggleProperty('announce');
             post.set('announce', !announce);
             post.set('announceChanged', true);
+        },
+
+        toggleComment() {
+            let post = this.post;
+            let privateComments = this.privateComments;
+            this.toggleProperty('privateComments');
+            post.set('discussionRoomType', privateComments ? 'c' : 'p');
         },
 
         toggleCollaborate() {

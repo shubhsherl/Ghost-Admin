@@ -83,7 +83,7 @@
                             <input
                                 type="checkbox"
                                 checked={{collaborate}}
-                                class="gh-input post-settings-announce"
+                                class="gh-input post-settings-collaborate"
                                 onclick={{action (mut collaborate) value="target.checked"}}
                                 data-test-checkbox="collaborate"
                             >
@@ -92,6 +92,24 @@
                             </label>
                         </div>
                     {{/if}}
+                </div>
+                {{/if}}
+
+                {{#if (and allowComments (eq post.displayName 'post'))}}
+                <div class="form-group">
+                    <div class="form-group for-checkbox">
+                        <label class="checkbox" for="comment" {{action "toggleComment" bubbles="false"}}>
+                        <input
+                            type="checkbox"
+                            checked={{privateComments}}
+                            class="gh-input post-settings-comment"
+                            onclick={{action (mut privateComments) value="target.checked"}}
+                            data-test-checkbox="comment"
+                        >
+                        <span class="input-toggle-component"></span>
+                        <p>Private Discussion Room</p>
+                        </label>
+                    </div>
                 </div>
                 {{/if}}
 
