@@ -15,7 +15,6 @@
             <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" href="https://docs.ghost.org/" target="_blank">{{svg-jar "ambulance"}} Support Center</a></li>
             <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" href="https://twitter.com/intent/tweet?text=%40TryGhost+Hi%21+Can+you+help+me+with+&related=TryGhost" target="_blank" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">{{svg-jar "twitter"}} Tweet @TryGhost!</a></li>
             <li role="presentation"><a class="dropdown-item" role="menuitem" tabindex="-1" href="https://docs.ghost.org/faq/using-ghost/" target="_blank">{{svg-jar "book-open"}} How to Use Ghost</a></li>
-            <li class="divider"></li>
 
             {{#if showDropdownExtension}}
                 {{#each config.clientExtensions.dropdown.items as |menuItem| }}
@@ -31,7 +30,6 @@
                 {{/each}}
 
             {{/if}}
-            <li role="presentation">{{#link-to "signout" classNames="dropdown-item user-menu-signout" role="menuitem" tabindex="-1"}}{{svg-jar "signout"}} Sign Out{{/link-to}}</li>
         </ul>
     {{/dropdown.content}}
 {{/gh-basic-dropdown}}

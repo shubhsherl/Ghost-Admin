@@ -44,6 +44,74 @@
                     </div>
                     {{gh-url-preview slug=slugValue tagName="p" classNames="description"}}
                 </div>
+                {{#if (and allowAnnouncements (eq post.displayName 'post'))}}
+                <div class="form-group">
+                    <label for="announcement">{{capitalize post.displayName}} Announcement</label>
+                        {{gh-text-input
+                            class="post-setting-room-name"
+                            id="room-name"
+                            name="post-setting-room-name"
+                            readonly=(not allowAuthorRooms)
+                            placeholder=(truncate roomName 40)
+                            value=(readonly roomName)
+                            focus-out=(action "validateRoom" roomNameScratch)
+                            input=(action (mut roomNameScratch) value="target.value")
+                            stopEnterKeyDownPropagation=true
+                            data-test-field="room-name"}}
+                        {{gh-error-message errors=post.errors property="roomName" data-test-error="room-name"}}
+                        {{#if allowAuthorRooms}}
+                            <p>Set Room Name to Announce</p>
+                        {{else}}
+                            <p>Cannot Change the Room Name</p>
+                        {{/if}}
+                    <div class="form-group for-checkbox">
+                        <label class="checkbox" for="announce" {{action "toggleAnnounce" bubbles="false"}}>
+                        <input
+                            type="checkbox"
+                            checked={{announce}}
+                            class="gh-input post-settings-announce"
+                            onclick={{action (mut announce) value="target.checked"}}
+                            data-test-checkbox="announce"
+                        >
+                        <span class="input-toggle-component"></span>
+                        <p>Announce this {{post.displayName}}</p>
+                        </label>
+                    </div>
+                    {{#if allowCollaboration}}
+                        <div class="form-group for-checkbox">
+                            <label class="checkbox" for="collaborate" {{action "toggleCollaborate" bubbles="false"}}>
+                            <input
+                                type="checkbox"
+                                checked={{collaborate}}
+                                class="gh-input post-settings-collaborate"
+                                onclick={{action (mut collaborate) value="target.checked"}}
+                                data-test-checkbox="collaborate"
+                            >
+                            <span class="input-toggle-component"></span>
+                            <p>Collaborate with {{roomName}}</p>
+                            </label>
+                        </div>
+                    {{/if}}
+                </div>
+                {{/if}}
+
+                {{#if (and allowComments (eq post.displayName 'post'))}}
+                <div class="form-group">
+                    <div class="form-group for-checkbox">
+                        <label class="checkbox" for="comment" {{action "toggleComment" bubbles="false"}}>
+                        <input
+                            type="checkbox"
+                            checked={{privateComments}}
+                            class="gh-input post-settings-comment"
+                            onclick={{action (mut privateComments) value="target.checked"}}
+                            data-test-checkbox="comment"
+                        >
+                        <span class="input-toggle-component"></span>
+                        <p>Private Discussion Room</p>
+                        </label>
+                    </div>
+                </div>
+                {{/if}}
 
                 <div class="form-group">
                     {{#if (or post.isDraft post.isPublished post.pastScheduledTime)}}
@@ -87,7 +155,8 @@
                     {{gh-error-message errors=post.errors property="customExcerpt" data-test-error="custom-excerpt"}}
                 {{/gh-form-group}}
 
-                {{#unless session.user.isAuthorOrContributor}}
+                {{!-- Author can add other authors, but contributor cannot --}}
+                {{#unless session.user.isContributor}}
                     {{#gh-form-group class="for-select" errors=post.errors hasValidated=post.hasValidated property="authors" data-test-input="authors"}}
                         <label for="author-list">Authors</label>
                         {{gh-psm-authors-input selectedAuthors=post.authors updateAuthors=(action "changeAuthors") triggerId="author-list"}}
@@ -100,6 +169,13 @@
                         <button type="button">
                             <b>Meta Data</b>
                             <span>Extra content for search engines</span>
+                        </button>
+                        {{svg-jar "arrow-right"}}
+                    </li>
+                     <li class="nav-list-item" {{action "showSubview" "announcement-data"}} data-test-button="announcement-data">
+                        <button type="button">
+                            <b>Announcement Card</b>
+                            <span>Customise structured data for Announcement message</span>
                         </button>
                         {{svg-jar "arrow-right"}}
                     </li>
@@ -217,6 +293,77 @@
                                         <div class="seo-preview-description">{{truncate seoDescription 300}}</div>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
+                    {{/if}}
+
+                    {{#if (eq subview "announcement-data")}}
+                        <div class="settings-menu-header subview">
+                            <button {{action "closeSubview"}} class="back settings-menu-header-action" data-test-button="close-psm-subview">{{svg-jar "arrow-left"}}<span class="hidden">Back</span></button>
+                            <h4>Announcement Card</h4>
+                            <div style="width:23px;"></div>
+                        </div>
+
+                        <div class="settings-menu-content">
+
+                            <form {{action "discardEnter" on="submit"}}>
+                                {{gh-image-uploader-with-preview
+                                    image=post.rcImage
+                                    text="Add Message image"
+                                    allowUnsplash=true
+                                    update=(action "setRcImage")
+                                    remove=(action "clearRcImage")
+                                }}
+                                {{#gh-form-group errors=post.errors hasValidated=post.hasValidated property="rcTitle"}}
+                                    <label for="announcement-title">Message Title</label>
+                                    {{gh-text-input
+                                        class="post-setting-rc-title"
+                                        id="rc-title"
+                                        name="post-setting-rc-title"
+                                        placeholder=(truncate rcTitle 40)
+                                        value=(readonly rcTitleScratch)
+                                        input=(action (mut rcTitleScratch) value="target.value")
+                                        focus-out=(action "setRcTitle" rcTitleScratch)
+                                        stopEnterKeyDownPropagation=true
+                                        data-test-field="announcement-title"}}
+                                    {{gh-error-message errors=post.errors property="rcTitle" data-test-error="announcement-title"}}
+                                {{/gh-form-group}}
+
+                                {{#gh-form-group errors=post.errors hasValidated=post.hasValidated property="rcDescription"}}
+                                    <label for="announcement-description">Message Description</label>
+                                    {{gh-textarea
+                                        class="post-setting-rc-description"
+                                        id="rc-description"
+                                        name="post-setting-rc-description"
+                                        placeholder=(truncate rcDescription 155)
+                                        stopEnterKeyDownPropagation="true"
+                                        value=(readonly rcDescriptionScratch)
+                                        input=(action (mut rcDescriptionScratch) value="target.value")
+                                        focus-out=(action "setRcDescription" rcDescriptionScratch)
+                                        data-test-field="announcement-description"}}
+                                    {{gh-error-message errors=post.errors property="rcDescription" data-test-error="rc-description"}}
+                                {{/gh-form-group}}
+
+                                <div class="form-group">
+                                    <label>Preview</label>
+                                    <div class="gh-rc-preview">
+                                        {{#if rcImage}}
+                                        <div class="gh-rc-preview-image" style={{background-image-style rcImage}}></div>
+                                        {{/if}}
+                                        <div class="gh-rc-preview-content">
+                                            <div class="gh-rc-preview-title">{{rcTitle}}</div>
+                                            <div class="gh-rc-preview-description">{{truncate rcDescription 155}}</div>
+                                            <div class="gh-rc-preview-footer">
+                                                <div class="gh-rc-preview-footer-left">
+                                                    {{config.blogDomain}}
+                                                </div>
+                                                <div class="gh-rc-preview-footer-right">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </form>
                         </div>
                     {{/if}}

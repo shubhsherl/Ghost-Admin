@@ -13,8 +13,7 @@ import {
     find,
     findAll,
     focus,
-    triggerEvent,
-    triggerKeyEvent
+    triggerEvent
 } from '@ember/test-helpers';
 import {errorOverride, errorReset} from '../helpers/adapter-error';
 import {expect} from 'chai';
@@ -66,7 +65,7 @@ describe('Acceptance: Staff', function () {
         await authenticateSession();
         await visit('/staff/no-access');
 
-        expect(currentURL(), 'currentURL').to.equal('/staff');
+        expect(currentURL(), 'currentURL').to.equal('/staff/no-access');
     });
 
     describe('when logged in as admin', function () {
@@ -141,239 +140,6 @@ describe('Acceptance: Staff', function () {
 
             // url should be /staff again
             expect(currentURL(), 'url after clicking back').to.equal('/staff');
-        });
-
-        it('can manage invites', async function () {
-            await visit('/staff');
-
-            // invite user button exists
-            expect(
-                find('.view-actions .gh-btn-green'),
-                'invite people button'
-            ).to.exist;
-
-            // existing users are listed
-            expect(
-                findAll('[data-test-user-id]').length,
-                'initial number of active users'
-            ).to.equal(2);
-
-            expect(
-                find('[data-test-user-id="1"] [data-test-role-name]').textContent.trim(),
-                'active user\'s role label'
-            ).to.equal('Administrator');
-
-            // existing invites are shown
-            expect(
-                findAll('[data-test-invite-id]').length,
-                'initial number of invited users'
-            ).to.equal(1);
-
-            expect(
-                find('[data-test-invite-id="1"] [data-test-invite-description]').textContent,
-                'expired invite description'
-            ).to.match(/expired/);
-
-            // remove expired invite
-            await click('[data-test-invite-id="1"] [data-test-revoke-button]');
-
-            expect(
-                findAll('[data-test-invite-id]').length,
-                'initial number of invited users'
-            ).to.equal(0);
-
-            // click the invite people button
-            await click('.view-actions .gh-btn-green');
-
-            let roleOptions = findAll('.fullscreen-modal select[name="role"] option');
-
-            function checkOwnerExists() {
-                for (let i in roleOptions) {
-                    if (roleOptions[i].tagName === 'option' && roleOptions[i].text === 'Owner') {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            function checkSelectedIsAuthor() {
-                for (let i in roleOptions) {
-                    if (roleOptions[i].selected) {
-                        return roleOptions[i].text === 'Author';
-                    }
-                }
-                return false;
-            }
-
-            // modal is displayed
-            expect(
-                find('.fullscreen-modal h1').textContent.trim(),
-                'correct modal is displayed'
-            ).to.equal('Invite a New User');
-
-            // number of roles is correct
-            expect(
-                findAll('.fullscreen-modal select[name="role"] option').length,
-                'number of selectable roles'
-            ).to.equal(3);
-
-            expect(checkOwnerExists(), 'owner role isn\'t available').to.be.false;
-            expect(checkSelectedIsAuthor(), 'author role is selected initially').to.be.true;
-
-            // submit valid invite form
-            await fillIn('.fullscreen-modal input[name="email"]', 'invite1@example.com');
-            await click('.fullscreen-modal .gh-btn-green');
-
-            // modal closes
-            expect(
-                findAll('[data-test-modal]').length,
-                'number of modals after sending invite'
-            ).to.equal(0);
-
-            // invite is displayed, has correct e-mail + role
-            expect(
-                findAll('[data-test-invite-id]').length,
-                'number of invites after first invite'
-            ).to.equal(1);
-
-            expect(
-                find('[data-test-invite-id="2"] [data-test-email]').textContent.trim(),
-                'displayed email of first invite'
-            ).to.equal('invite1@example.com');
-
-            expect(
-                find('[data-test-invite-id="2"] [data-test-role-name]').textContent.trim(),
-                'displayed role of first invite'
-            ).to.equal('Author');
-
-            expect(
-                find('[data-test-invite-id="2"] [data-test-invite-description]').textContent,
-                'new invite description'
-            ).to.match(/expires/);
-
-            // number of users is unchanged
-            expect(
-                findAll('[data-test-user-id]').length,
-                'number of active users after first invite'
-            ).to.equal(2);
-
-            // submit new invite with different role
-            await click('.view-actions .gh-btn-green');
-            await fillIn('.fullscreen-modal input[name="email"]', 'invite2@example.com');
-            await fillIn('.fullscreen-modal select[name="role"]', '2');
-            await click('.fullscreen-modal .gh-btn-green');
-
-            // number of invites increases
-            expect(
-                findAll('[data-test-invite-id]').length,
-                'number of invites after second invite'
-            ).to.equal(2);
-
-            // invite has correct e-mail + role
-            expect(
-                find('[data-test-invite-id="3"] [data-test-email]').textContent.trim(),
-                'displayed email of second invite'
-            ).to.equal('invite2@example.com');
-
-            expect(
-                find('[data-test-invite-id="3"] [data-test-role-name]').textContent.trim(),
-                'displayed role of second invite'
-            ).to.equal('Editor');
-
-            // submit invite form with existing user
-            await click('.view-actions .gh-btn-green');
-            await fillIn('.fullscreen-modal input[name="email"]', 'admin@example.com');
-            await click('.fullscreen-modal .gh-btn-green');
-
-            // validation message is displayed
-            expect(
-                find('.fullscreen-modal .error .response').textContent.trim(),
-                'inviting existing user error'
-            ).to.equal('A user with that email address already exists.');
-
-            // submit invite form with existing invite
-            await fillIn('.fullscreen-modal input[name="email"]', 'invite1@example.com');
-            await click('.fullscreen-modal .gh-btn-green');
-
-            // validation message is displayed
-            expect(
-                find('.fullscreen-modal .error .response').textContent.trim(),
-                'inviting invited user error'
-            ).to.equal('A user with that email address was already invited.');
-
-            // submit invite form with an invalid email
-            await fillIn('.fullscreen-modal input[name="email"]', 'test');
-            await click('.fullscreen-modal .gh-btn-green');
-
-            // validation message is displayed
-            expect(
-                find('.fullscreen-modal .error .response').textContent.trim(),
-                'inviting invalid email error'
-            ).to.equal('Invalid Email.');
-
-            await click('.fullscreen-modal a.close');
-            // revoke latest invite
-            await click('[data-test-invite-id="3"] [data-test-revoke-button]');
-
-            // number of invites decreases
-            expect(
-                findAll('[data-test-invite-id]').length,
-                'number of invites after revoke'
-            ).to.equal(1);
-
-            // notification is displayed
-            expect(
-                find('.gh-notification').textContent.trim(),
-                'notifications contain revoke'
-            ).to.match(/Invitation revoked\. \(invite2@example\.com\)/);
-
-            // correct invite is removed
-            expect(
-                find('[data-test-invite-id] [data-test-email]').textContent.trim(),
-                'displayed email of remaining invite'
-            ).to.equal('invite1@example.com');
-
-            // add another invite to test ordering on resend
-            await click('.view-actions .gh-btn-green');
-            await fillIn('.fullscreen-modal input[name="email"]', 'invite3@example.com');
-            await click('.fullscreen-modal .gh-btn-green');
-
-            // new invite should be last in the list
-            expect(
-                find('[data-test-invite-id]:last-of-type [data-test-email]').textContent.trim(),
-                'last invite email in list'
-            ).to.equal('invite3@example.com');
-
-            // resend first invite
-            await click('[data-test-invite-id="2"] [data-test-resend-button]');
-
-            // notification is displayed
-            expect(
-                find('.gh-notification').textContent.trim(),
-                'notifications contain resend'
-            ).to.match(/Invitation resent! \(invite1@example\.com\)/);
-
-            // first invite is still at the top
-            expect(
-                find('[data-test-invite-id]:first-of-type [data-test-email]').textContent.trim(),
-                'first invite email in list'
-            ).to.equal('invite1@example.com');
-
-            // regression test: can revoke a resent invite
-            await click('[data-test-invite-id]:first-of-type [data-test-resend-button]');
-            await click('[data-test-invite-id]:first-of-type [data-test-revoke-button]');
-
-            // number of invites decreases
-            expect(
-                findAll('[data-test-invite-id]').length,
-                'number of invites after resend/revoke'
-            ).to.equal(1);
-
-            // notification is displayed
-            expect(
-                find('.gh-notification').textContent.trim(),
-                'notifications contain revoke after resend/revoke'
-            ).to.match(/Invitation revoked\. \(invite1@example\.com\)/);
         });
 
         it('can manage suspended users', async function () {
@@ -468,10 +234,10 @@ describe('Acceptance: Staff', function () {
         });
 
         describe('existing user', function () {
-            let user, newLocation, originalReplaceState;
+            let newLocation, originalReplaceState;
 
             beforeEach(function () {
-                user = this.server.create('user', {
+                this.server.create('user', {
                     slug: 'test-1',
                     name: 'Test User',
                     facebook: 'test',
@@ -692,110 +458,6 @@ describe('Acceptance: Staff', function () {
                     find('[data-test-bio-input]').closest('.form-group'),
                     'bio input should be in error state'
                 ).to.have.class('error');
-
-                // password reset ------
-
-                // button triggers validation
-                await click('[data-test-save-pw-button]');
-
-                expect(
-                    find('[data-test-new-pass-input]').closest('.form-group'),
-                    'new password has error class when blank'
-                ).to.have.class('error');
-
-                expect(
-                    find('[data-test-error="user-new-pass"]').textContent,
-                    'new password error when blank'
-                ).to.have.string('can\'t be blank');
-
-                // validates too short password (< 10 characters)
-                await fillIn('[data-test-new-pass-input]', 'notlong');
-                await fillIn('[data-test-ne2-pass-input]', 'notlong');
-
-                // enter key triggers action
-                await triggerKeyEvent('[data-test-new-pass-input]', 'keyup', 13);
-
-                expect(
-                    find('[data-test-new-pass-input]').closest('.form-group'),
-                    'new password has error class when password too short'
-                ).to.have.class('error');
-
-                expect(
-                    find('[data-test-error="user-new-pass"]').textContent,
-                    'new password error when it\'s too short'
-                ).to.have.string('at least 10 characters long');
-
-                // validates unsafe password
-                await fillIn('#user-password-new', 'ghostisawesome');
-                await fillIn('[data-test-ne2-pass-input]', 'ghostisawesome');
-
-                // enter key triggers action
-                await triggerKeyEvent('#user-password-new', 'keyup', 13);
-
-                expect(
-                    find('#user-password-new').closest('.form-group'),
-                    'new password has error class when password is insecure'
-                ).to.have.class('error');
-
-                expect(
-                    find('[data-test-error="user-new-pass"]').textContent,
-                    'new password error when it\'s insecure'
-                ).to.match(/you cannot use an insecure password/);
-
-                // typing in inputs clears validation
-                await fillIn('[data-test-new-pass-input]', 'thisissupersafe');
-                await triggerEvent('[data-test-new-pass-input]', 'input');
-
-                expect(
-                    find('[data-test-new-pass-input]').closest('.form-group'),
-                    'password validation is visible after typing'
-                ).to.not.have.class('error');
-
-                // enter key triggers action
-                await triggerKeyEvent('[data-test-new-pass-input]', 'keyup', 13);
-
-                expect(
-                    find('[data-test-ne2-pass-input]').closest('.form-group'),
-                    'confirm password has error class when it doesn\'t match'
-                ).to.have.class('error');
-
-                expect(
-                    find('[data-test-error="user-ne2-pass"]').textContent,
-                    'confirm password error when it doesn\'t match'
-                ).to.have.string('do not match');
-
-                // submits with correct details
-                await fillIn('[data-test-ne2-pass-input]', 'thisissupersafe');
-                await click('[data-test-save-pw-button]');
-
-                // hits the endpoint
-                let [newRequest] = this.server.pretender.handledRequests.slice(-1);
-                params = JSON.parse(newRequest.requestBody);
-
-                expect(newRequest.url, 'password request URL')
-                    .to.match(/\/users\/password/);
-
-                // eslint-disable-next-line camelcase
-                expect(params.password[0].user_id).to.equal(user.id.toString());
-                expect(params.password[0].newPassword).to.equal('thisissupersafe');
-                expect(params.password[0].ne2Password).to.equal('thisissupersafe');
-
-                // clears the fields
-                expect(
-                    find('[data-test-new-pass-input]').value,
-                    'password field after submit'
-                ).to.be.empty;
-
-                expect(
-                    find('[data-test-ne2-pass-input]').value,
-                    'password verification field after submit'
-                ).to.be.empty;
-
-                // displays a notification
-                expect(
-                    findAll('.gh-notifications .gh-notification').length,
-                    'password saved notification is displayed'
-                ).to.equal(1);
             });
 
             it('warns when leaving without saving', async function () {
@@ -832,46 +494,6 @@ describe('Acceptance: Staff', function () {
             });
         });
 
-        describe('own user', function () {
-            it('requires current password when changing password', async function () {
-                await visit(`/staff/${admin.slug}`);
-
-                // test the "old password" field is validated
-                await click('[data-test-save-pw-button]');
-
-                // old password has error
-                expect(
-                    find('[data-test-old-pass-input]').closest('.form-group'),
-                    'old password has error class when blank'
-                ).to.have.class('error');
-
-                expect(
-                    find('[data-test-error="user-old-pass"]').textContent,
-                    'old password error when blank'
-                ).to.have.string('is required');
-
-                // new password has error
-                expect(
-                    find('[data-test-new-pass-input]').closest('.form-group'),
-                    'new password has error class when blank'
-                ).to.have.class('error');
-
-                expect(
-                    find('[data-test-error="user-new-pass"]').textContent,
-                    'new password error when blank'
-                ).to.have.string('can\'t be blank');
-
-                // validation is cleared when typing
-                await fillIn('[data-test-old-pass-input]', 'password');
-                await triggerEvent('[data-test-old-pass-input]', 'input');
-
-                expect(
-                    find('[data-test-old-pass-input]').closest('.form-group'),
-                    'old password validation is in error state after typing'
-                ).to.not.have.class('error');
-            });
-        });
-
         it('redirects to 404 when user does not exist', async function () {
             this.server.get('/users/slug/unknown/', function () {
                 return new Response(404, {'Content-Type': 'application/json'}, {errors: [{message: 'User not found.', type: 'NotFoundError'}]});
@@ -895,21 +517,11 @@ describe('Acceptance: Staff', function () {
             authorRole = this.server.create('role', {name: 'Author'});
             this.server.create('user', {roles: [authorRole]});
 
-            this.server.get('/invites/', function () {
-                return new Response(403, {}, {
-                    errors: [{
-                        type: 'NoPermissionError',
-                        message: 'You do not have permission to perform this action'
-                    }]
-                });
-            });
-
             return await authenticateSession();
         });
 
         it('can access the staff page', async function () {
             this.server.create('user', {roles: [adminRole]});
-            this.server.create('invite', {role: authorRole});
 
             errorOverride();
 

@@ -1,27 +1,18 @@
 <div class="gh-flow">
-    <header class="gh-flow-head">
-        <nav class="gh-flow-nav">
-            {{#if showBackLink}}
-                {{#link-to backRoute classNames="gh-flow-back"}}{{svg-jar "arrow-left-small"}} Back{{/link-to}}
-            {{/if}}
-            <ol>
-                {{#gh-activating-list-item route="setup.one" linkClasses="step"}}
-                    {{svg-jar "check-circle"}}<span class="num">1</span>
-                {{/gh-activating-list-item}}
-                <li class="divider"></li>
-                {{#gh-activating-list-item route="setup.two" linkClasses="step"}}
-                    {{svg-jar "check-circle"}}<span class="num">2</span>
-                {{/gh-activating-list-item}}
-                <li class="divider"></li>
-                {{#gh-activating-list-item route="setup.three" linkClasses="step"}}
-                    {{svg-jar "check-circle"}}<span class="num">3</span>
-                {{/gh-activating-list-item}}
-            </ol>
-        </nav>
-    </header>
     <div class="gh-flow-content-wrap">
         <section class="gh-flow-content">
-            {{outlet}}
+            <header>
+                <h1>Welcome to <strong>Ghost</strong>!</h1>
+                <p>All over the world, people have started <em>{{gh-download-count}}</em> incredible sites with Ghost. Today,
+                    we’re starting yours.</p>
+            </header>
+
+            <figure class="gh-flow-screenshot">
+                <img src="assets/img/install-welcome.png" alt="Ghost screenshot" />
+            </figure>
+
+            <p>Setup Ghost from Admin Panel</p>
+
         </section>
     </div>
 </div>

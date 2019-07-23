@@ -6,11 +6,7 @@ import Model from 'ember-data/model';
 import NavItemValidator from 'ghost-admin/validators/nav-item';
 import PostValidator from 'ghost-admin/validators/post';
 import RSVP from 'rsvp';
-import ResetValidator from 'ghost-admin/validators/reset';
 import SettingValidator from 'ghost-admin/validators/setting';
-import SetupValidator from 'ghost-admin/validators/setup';
-import SigninValidator from 'ghost-admin/validators/signin';
-import SignupValidator from 'ghost-admin/validators/signup';
 import SlackIntegrationValidator from 'ghost-admin/validators/slack-integration';
 import SubscriberValidator from 'ghost-admin/validators/subscriber';
 import TagSettingsValidator from 'ghost-admin/validators/tag-settings';
@@ -36,11 +32,7 @@ export default Mixin.create({
         inviteUser: InviteUserValidator,
         navItem: NavItemValidator,
         post: PostValidator,
-        reset: ResetValidator,
         setting: SettingValidator,
-        setup: SetupValidator,
-        signin: SigninValidator,
-        signup: SignupValidator,
         slackIntegration: SlackIntegrationValidator,
         subscriber: SubscriberValidator,
         tag: TagSettingsValidator,
@@ -140,7 +132,9 @@ export default Mixin.create({
         // If save to the server fails, reject with server response.
         return this.validate(options).then(() => {
             if (typeof this.beforeSave === 'function') {
-                this.beforeSave();
+                return this.beforeSave().then(() => {
+                    return _super.call(this, options);
+                });
             }
             return _super.call(this, options);
         }).catch((result) => {

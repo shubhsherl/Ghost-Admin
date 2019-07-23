@@ -109,12 +109,6 @@
             modifier="action wide"}}
     {{/if}}
 
-    {{#if showReAuthenticateModal}}
-        {{gh-fullscreen-modal "re-authenticate"
-            close=(action "toggleReAuthenticateModal")
-            modifier="action wide"}}
-    {{/if}}
-
     {{#liquid-wormhole}}
         {{gh-post-settings-menu
             post=post

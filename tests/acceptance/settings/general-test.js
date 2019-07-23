@@ -320,6 +320,45 @@ describe('Acceptance: Settings - General', function () {
             expect(find('#activeTimezone option:checked').textContent.trim()).to.equal('(GMT +2:00) Cairo, Egypt');
         });
 
+        it('handles rocket.chat settings correctly', async function () {
+            await visit('/settings/general');
+
+            await click('[data-test-toggle-server-url]');
+
+            expect(find('[data-test-server-url-input]').value, 'initial server-url value')
+                .to.equal('');
+
+            // handles rocket chat specific settings correctly
+            expect(find('[data-test-announced-checkbox]').checked, 'Announcement checkbox').to.be.false;
+            expect(find('[data-test-authors-rooms-checkbox]').checked, 'Authors rooms checkbox').to.be.false;
+            expect(find('[data-test-collaboration-checkbox]').checked, 'Collaboration checkbox').to.be.false;
+            expect(find('[data-test-comments-checkbox]').checked, 'Comments checkbox').to.be.false;
+            expect(find('[data-test-invite-only-checkbox]').checked, 'Invite Only checkbox').to.be.false;
+
+            // will only enable when data-test-announced-checkbox is true
+            await click('[data-test-authors-rooms-checkbox]');
+            await click('[data-test-collaboration-checkbox]');
+
+            expect(find('[data-test-authors-rooms-checkbox]').checked, 'Authors rooms checkbox').to.be.false;
+            expect(find('[data-test-collaboration-checkbox]').checked, 'Collaboration checkbox').to.be.false;
+
+            await click('[data-test-announced-checkbox]');
+            await click('[data-test-authors-rooms-checkbox]');
+            await click('[data-test-collaboration-checkbox]');
+
+            expect(find('[data-test-authors-rooms-checkbox]').checked, 'Authors rooms checkbox').to.be.true;
+            expect(find('[data-test-collaboration-checkbox]').checked, 'Collaboration checkbox').to.be.true;
+
+            expect(find('[data-test-announced-checkbox]').checked, 'Announcement checkbox').to.be.true;
+            expect(findAll('[data-test-room-input]').length, 'room name input').to.equal(1);
+            expect(find('[data-test-room-input]').value, 'room name default value').to.equal('');
+
+            // await fillIn('[data-test-room-input]', '');
+            // await blur('[data-test-room-input]');
+
+            // expect(find('[data-test-room-input]').value, 'room name default value').to.equal('');
+        });
+
         it('handles private blog settings correctly', async function () {
             await visit('/settings/general');
 
