@@ -70,25 +70,11 @@ export default Controller.extend({
     }),
 
     activeUsers: computed('allUsers.@each.{status,roles,parentId}', 'role', 'currentUser', function () {
-        let role = this.role;
-        return this.allUsers.filter((user) => {
-            let isParent = false;
-            if (role === 'Contributors') {
-                isParent = this.currentUser.get('id') === user.parentId && user.roles.get('firstObject').name === 'Contributor';
-            }
-            return user.status !== 'inactive' && (role ? isParent || user.roles.get('firstObject').name === role : true);
-        });
+        return this.getUsers('active');
     }),
 
     suspendedUsers: computed('allUsers.@each.{status,roles,parentId}', 'role','currentUser', function () {
-        let role = this.role;
-        return this.allUsers.filter((user) => {
-            let isParent = false;
-            if (role === 'Contributors') {
-                isParent = this.currentUser.get('id') === user.parentId && user.roles.get('firstObject').name === 'Contributor';
-            }
-            return user.status === 'inactive' && (role ? isParent || user.roles.get('firstObject').name === role : true);
-        });
+        return this.getUsers('inactive');
     }),
 
     actions: {
@@ -112,5 +98,16 @@ export default Controller.extend({
 
     fetchUsers: task(function* () {
         yield this.store.query('user', {limit: 'all', include: 'parents'});
-    })
+    }),
+
+    getUsers(status = 'active') {
+        let role = this.role;
+        return this.allUsers.filter((user) => {
+            let isParent = false;
+            if (role === 'Contributors') {
+                isParent = this.currentUser.get('id') === user.parentId && user.roles.get('firstObject').name === 'Contributor';
+            }
+            return user.status === status && (role ? isParent || user.roles.get('firstObject').name === role : true);
+        });
+    }
 });

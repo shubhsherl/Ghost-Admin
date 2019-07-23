@@ -65,10 +65,10 @@ export default Component.extend(SettingsMenuMixin, {
     }),
 
     seoDescription: computed('post.scratch', 'metaDescriptionScratch', function () {
-        let metaDescription = this.metaDescriptionScratch || '';
-        let mobiledoc = this.get('post.scratch');
-        let [markdownCard] = (mobiledoc && mobiledoc.cards) || [];
-        let markdown = markdownCard && markdownCard[1] && markdownCard[1].markdown;
+        const metaDescription = this.metaDescriptionScratch || '';
+        const mobiledoc = this.get('post.scratch');
+        const [markdownCard] = (mobiledoc && mobiledoc.cards) || [];
+        const markdown = markdownCard && markdownCard[1] && markdownCard[1].markdown;
         let placeholder;
 
         if (metaDescription) {
@@ -87,9 +87,9 @@ export default Component.extend(SettingsMenuMixin, {
     }),
 
     seoURL: computed('post.{slug,canonicalUrl}', 'config.blogUrl', function () {
-        let blogUrl = this.get('config.blogUrl');
-        let seoSlug = this.post.slug || '';
-        let canonicalUrl = this.post.canonicalUrl || '';
+        const blogUrl = this.get('config.blogUrl');
+        const seoSlug = this.post.slug || '';
+        const canonicalUrl = this.post.canonicalUrl || '';
 
         if (canonicalUrl) {
             if (canonicalUrl.match(/^\//)) {
@@ -122,8 +122,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         // fired when menu is closed
         if (!this.showSettingsMenu && this._showSettingsMenu) {
-            let post = this.post;
-            let errors = post.get('errors');
+            const post = this.post;
+            const errors = post.get('errors');
 
             // reset the publish date if it has an error
             if (errors.has('publishedAtBlogDate') || errors.has('publishedAtBlogTime')) {
@@ -187,23 +187,23 @@ export default Component.extend(SettingsMenuMixin, {
          * triggered by user manually changing announce-setting
          */
         toggleAnnounce() {
-            let post = this.post;
-            let announce = this.announce;
+            const post = this.post;
+            const announce = this.announce;
             this.toggleProperty('announce');
             post.set('announce', !announce);
             post.set('announceChanged', true);
         },
 
         toggleComment() {
-            let post = this.post;
-            let privateComments = this.privateComments;
+            const post = this.post;
+            const privateComments = this.privateComments;
             this.toggleProperty('privateComments');
             post.set('discussionRoomType', privateComments ? 'c' : 'p');
         },
 
         toggleCollaborate() {
-            let post = this.post;
-            let collaborate = this.collaborate;
+            const post = this.post;
+            const collaborate = this.collaborate;
             this.toggleProperty('collaborate');
             post.set('collaborate', !collaborate);
         },
@@ -212,9 +212,9 @@ export default Component.extend(SettingsMenuMixin, {
          * triggered by user manually changing room-name
          */
         validateRoom(newRoom) {
-            let oldRoom = this.roomName;
-            let post = this.post;
-            let errMessage = 'Room does not exist';
+            const oldRoom = this.roomName;
+            const post = this.post;
+            const errMessage = 'Room does not exist';
 
             // reset errors and validation
             post.get('errors').remove('roomName');
@@ -224,9 +224,9 @@ export default Component.extend(SettingsMenuMixin, {
             }
             this.rcServices.getRoom(newRoom)
                 .then((room) => {
-                    const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
+                    const {data: [{exist}]} = room;
 
-                    if (!existingRCRoom) {
+                    if (!exist) {
                         throw errMessage;
                     }
                     post.set('roomName', newRoom);
@@ -254,8 +254,8 @@ export default Component.extend(SettingsMenuMixin, {
         },
 
         setPublishedAtBlogDate(date) {
-            let post = this.post;
-            let dateString = moment(date).format('YYYY-MM-DD');
+            const post = this.post;
+            const dateString = moment(date).format('YYYY-MM-DD');
 
             post.get('errors').remove('publishedAtBlogDate');
 
@@ -268,7 +268,7 @@ export default Component.extend(SettingsMenuMixin, {
         },
 
         setPublishedAtBlogTime(time) {
-            let post = this.post;
+            const post = this.post;
 
             post.get('errors').remove('publishedAtBlogDate');
 
@@ -281,8 +281,8 @@ export default Component.extend(SettingsMenuMixin, {
         },
 
         setCustomExcerpt(excerpt) {
-            let post = this.post;
-            let currentExcerpt = post.get('customExcerpt');
+            const post = this.post;
+            const currentExcerpt = post.get('customExcerpt');
 
             if (excerpt === currentExcerpt) {
                 return;
@@ -294,8 +294,8 @@ export default Component.extend(SettingsMenuMixin, {
         },
 
         setHeaderInjection(code) {
-            let post = this.post;
-            let currentCode = post.get('codeinjectionHead');
+            const post = this.post;
+            const currentCode = post.get('codeinjectionHead');
 
             if (code === currentCode) {
                 return;
@@ -307,8 +307,8 @@ export default Component.extend(SettingsMenuMixin, {
         },
 
         setFooterInjection(code) {
-            let post = this.post;
-            let currentCode = post.get('codeinjectionFoot');
+            const post = this.post;
+            const currentCode = post.get('codeinjectionFoot');
 
             if (code === currentCode) {
                 return;
@@ -321,8 +321,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setMetaTitle(metaTitle) {
             // Grab the post and current stored meta title
-            let post = this.post;
-            let currentTitle = post.get('metaTitle');
+            const post = this.post;
+            const currentTitle = post.get('metaTitle');
 
             // If the title entered matches the stored meta title, do nothing
             if (currentTitle === metaTitle) {
@@ -344,8 +344,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setMetaDescription(metaDescription) {
             // Grab the post and current stored meta description
-            let post = this.post;
-            let currentDescription = post.get('metaDescription');
+            const post = this.post;
+            const currentDescription = post.get('metaDescription');
 
             // If the title entered matches the stored meta title, do nothing
             if (currentDescription === metaDescription) {
@@ -367,8 +367,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setCanonicalUrl(value) {
             // Grab the post and current stored meta description
-            let post = this.post;
-            let currentCanonicalUrl = post.canonicalUrl;
+            const post = this.post;
+            const currentCanonicalUrl = post.canonicalUrl;
 
             // If the value entered matches the stored value, do nothing
             if (currentCanonicalUrl === value) {
@@ -390,8 +390,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setOgTitle(ogTitle) {
             // Grab the post and current stored facebook title
-            let post = this.post;
-            let currentTitle = post.get('ogTitle');
+            const post = this.post;
+            const currentTitle = post.get('ogTitle');
 
             // If the title entered matches the stored facebook title, do nothing
             if (currentTitle === ogTitle) {
@@ -413,8 +413,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setOgDescription(ogDescription) {
             // Grab the post and current stored facebook description
-            let post = this.post;
-            let currentDescription = post.get('ogDescription');
+            const post = this.post;
+            const currentDescription = post.get('ogDescription');
 
             // If the title entered matches the stored facebook description, do nothing
             if (currentDescription === ogDescription) {
@@ -436,8 +436,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setTwitterTitle(twitterTitle) {
             // Grab the post and current stored twitter title
-            let post = this.post;
-            let currentTitle = post.get('twitterTitle');
+            const post = this.post;
+            const currentTitle = post.get('twitterTitle');
 
             // If the title entered matches the stored twitter title, do nothing
             if (currentTitle === twitterTitle) {
@@ -459,8 +459,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setTwitterDescription(twitterDescription) {
             // Grab the post and current stored twitter description
-            let post = this.post;
-            let currentDescription = post.get('twitterDescription');
+            const post = this.post;
+            const currentDescription = post.get('twitterDescription');
 
             // If the description entered matches the stored twitter description, do nothing
             if (currentDescription === twitterDescription) {
@@ -482,8 +482,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setRcTitle(rcTitle) {
             // Grab the post and current stored twitter title
-            let post = this.post;
-            let currentTitle = post.get('rcTitle');
+            const post = this.post;
+            const currentTitle = post.get('rcTitle');
 
             // If the title entered matches the stored twitter title, do nothing
             if (currentTitle === rcTitle) {
@@ -505,8 +505,8 @@ export default Component.extend(SettingsMenuMixin, {
 
         setRcDescription(rcDescription) {
             // Grab the post and current stored twitter description
-            let post = this.post;
-            let currentDescription = post.get('rcDescription');
+            const post = this.post;
+            const currentDescription = post.get('rcDescription');
 
             // If the description entered matches the stored twitter description, do nothing
             if (currentDescription === rcDescription) {
@@ -529,109 +529,53 @@ export default Component.extend(SettingsMenuMixin, {
         setCoverImage(image) {
             this.set('post.featureImage', image);
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         clearCoverImage() {
             this.set('post.featureImage', '');
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         setOgImage(image) {
             this.set('post.ogImage', image);
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         clearOgImage() {
             this.set('post.ogImage', '');
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         setTwitterImage(image) {
             this.set('post.twitterImage', image);
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         clearTwitterImage() {
             this.set('post.twitterImage', '');
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         setRcImage(image) {
             this.set('post.rcImage', image);
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         clearRcImage() {
             this.set('post.rcImage', '');
 
-            if (this.get('post.isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                this.post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         changeAuthors(newAuthors) {
-            let post = this.post;
+            const post = this.post;
 
             // return if nothing changed
             if (newAuthors.mapBy('id').join() === post.get('authors').mapBy('id').join()) {
@@ -642,14 +586,7 @@ export default Component.extend(SettingsMenuMixin, {
             post.validate({property: 'authors'});
 
             // if this is a new post (never been saved before), don't try to save it
-            if (post.get('isNew')) {
-                return;
-            }
-
-            this.savePost.perform().catch((error) => {
-                this.showError(error);
-                post.rollbackAttributes();
-            });
+            this.savePostUtils();
         },
 
         deletePost() {
@@ -669,5 +606,16 @@ export default Component.extend(SettingsMenuMixin, {
         if (error) {
             this.notifications.showAPIError(error);
         }
+    },
+
+    savePostUtils() {
+        if (this.get('post.isNew')) {
+            return;
+        }
+
+        this.savePost.perform().catch((error) => {
+            this.showError(error);
+            this.post.rollbackAttributes();
+        });
     }
 });

@@ -365,10 +365,11 @@ export default Model.extend(Comparable, ValidationEngine, {
         return new RSVP.Promise((resolve) => {
             if (this.get('settings.isComments') && this.isPublished && !this.discussionRoomId && this.displayName === 'post') {
                 return this.rcServices.createDiscussion(this.title, this.discussionRoomType).then((room) => {
-                    if (room && room.data[0].created) {
-                        this.set('discussionRoomId', room.data[0].rid);
-                        this.set('discussionRoomName', room.data[0].roomname);
-                        this.set('discussionRoomType', room.data[0].type);
+                    const [{created, rid, type, roomname}] = room.data;
+                    if (created) {
+                        this.set('discussionRoomId', rid);
+                        this.set('discussionRoomName', roomname);
+                        this.set('discussionRoomType', type);
                     }
                     return resolve();
                 });
