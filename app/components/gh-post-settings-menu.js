@@ -208,6 +208,10 @@ export default Component.extend(SettingsMenuMixin, {
             post.set('collaborate', !collaborate);
         },
 
+        togglePrivatePost() {
+            this.toggleProperty('post.isPrivate');
+        },
+
         /**
          * triggered by user manually changing room-name
          */

@@ -84,6 +84,7 @@ export default Model.extend(Comparable, ValidationEngine, {
     featured: attr('boolean', {defaultValue: false}),
     announce: attr('boolean', {defaultValue: false}),
     collaborate: attr('boolean', {defaultValue: false}),
+    isPrivate: attr('boolean', {defaultValue: false}),
     featureImage: attr('string'),
     canonicalUrl: attr('string'),
     codeinjectionFoot: attr('string', {defaultValue: ''}),

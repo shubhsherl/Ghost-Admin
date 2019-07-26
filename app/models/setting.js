@@ -25,6 +25,8 @@ export default Model.extend(ValidationEngine, {
     isAnnounced: attr('boolean'),
     isPrivate: attr('boolean'),
     isAuthorsRooms: attr('boolean'),
+    announceToken: attr('string'),
+    settingsToken: attr('string'),
     isComments: attr('boolean'),
     inviteOnly: attr('boolean'),
     canCollaborate: attr('boolean'),

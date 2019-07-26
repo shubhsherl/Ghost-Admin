@@ -92,6 +92,19 @@
                             </label>
                         </div>
                     {{/if}}
+                    <div class="form-group for-checkbox">
+                        <label class="checkbox" for="private" {{action "togglePrivatePost" bubbles="false"}}>
+                        <input
+                            type="checkbox"
+                            checked={{post.isPrivate}}
+                            class="gh-input post-settings-announce"
+                            onclick={{action (mut post.isPrivate) value="target.checked"}}
+                            data-test-checkbox="privatePost"
+                        >
+                        <span class="input-toggle-component"></span>
+                        <p>Only for {{roomName}}</p>
+                        </label>
+                    </div>
                 </div>
                 {{/if}}
 
