@@ -37,10 +37,9 @@ export default Controller.extend({
     session: service(),
     store: service(),
 
-    queryParams: ['type', 'author', 'tag', 'order'],
+    queryParams: ['type', 'tag', 'order'],
 
     type: null,
-    author: null,
     tag: null,
     order: null,
 
@@ -58,10 +57,10 @@ export default Controller.extend({
 
     postsInfinityModel: alias('model'),
 
-    showingAll: computed('type', 'author', 'tag', function () {
-        let {type, author, tag} = this.getProperties(['type', 'author', 'tag']);
+    showingAll: computed('type', 'tag', function () {
+        let {type, tag} = this.getProperties(['type', 'tag']);
 
-        return !type && !author && !tag;
+        return !type && !tag;
     }),
 
     selectedType: computed('type', function () {
@@ -96,24 +95,8 @@ export default Controller.extend({
         return tags.findBy('slug', tag);
     }),
 
-    _availableAuthors: computed(function () {
-        return this.get('store').peekAll('user');
-    }),
-
-    availableAuthors: computed('_availableAuthors.[]', function () {
-        let authors = this.get('_availableAuthors');
-        let options = authors.toArray();
-
-        options.unshiftObject({name: 'All authors', slug: null});
-
-        return options;
-    }),
-
-    selectedAuthor: computed('author', 'availableAuthors.[]', function () {
-        let author = this.get('author');
-        let authors = this.get('availableAuthors');
-
-        return authors.findBy('slug', author);
+    currentUserId: computed('session.user.id', function () {
+        return this.get('session.user.id');
     }),
 
     actions: {

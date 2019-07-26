@@ -95,7 +95,6 @@ export default Controller.extend({
     shouldFocusEditor: false,
     showDeletePostModal: false,
     showLeaveEditorModal: false,
-    showReAuthenticateModal: false,
 
     // koenig related properties
     wordcount: null,
@@ -239,10 +238,6 @@ export default Controller.extend({
             if (!this.get('post.isNew')) {
                 this.toggleProperty('showDeletePostModal');
             }
-        },
-
-        toggleReAuthenticateModal() {
-            this.toggleProperty('showReAuthenticateModal');
         },
 
         setKoenigEditor(koenig) {

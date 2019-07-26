@@ -291,6 +291,54 @@ describe.skip('Unit: Component: post-settings-menu', function () {
         });
     });
 
+    describe('toggleAnnounce', function () {
+        it('should toggle the announce property', function () {
+            let component = this.subject({
+                post: EmberObject.create({
+                    announce: false
+                })
+            });
+
+            run(function () {
+                component.send('toggleAnnounce');
+
+                expect(component.get('post.announce')).to.be.ok;
+            });
+        });
+    });
+
+    describe('toggleComment', function () {
+        it('should toggle the comment property', function () {
+            let component = this.subject({
+                post: EmberObject.create({
+                    discussionRoomType: 'c'
+                })
+            });
+
+            run(function () {
+                component.send('toggleComment');
+
+                expect(component.get('post.discussionRoomType'), 'Discussion room type').to.equal('p');
+            });
+        });
+    });
+
+    describe('toggleCollaborate', function () {
+        it('should toggle the collaborate property', function () {
+            let component = this.subject({
+                post: EmberObject.create({
+                    collaborate: false
+                })
+            });
+
+            run(function () {
+                component.send('toggleCollaborate');
+
+                expect(component.get('post.collaborate')).to.be.ok;
+            });
+        });
+    });
+
     describe('toggleFeatured', function () {
         it('should toggle the featured property', function () {
             let component = this.subject({
