@@ -18,6 +18,7 @@ export default Controller.extend({
     notifications: service(),
     session: service(),
     slugGenerator: service(),
+    store: service(),
 
     leaveSettingsTransition: null,
     dirtyAttributes: false,
@@ -39,7 +40,6 @@ export default Controller.extend({
 
     canAssignRoles: or('currentUser.isAdmin', 'currentUser.isOwner'),
     canChangeEmail: not('isAdminUserOnOwnerProfile'),
-    canChangePassword: not('isAdminUserOnOwnerProfile'),
     canMakeOwner: and('currentUser.isOwner', 'isNotOwnProfile', 'user.isAdmin', 'isNotSuspended'),
     isAdminUserOnOwnerProfile: and('currentUser.isAdmin', 'user.isOwner'),
     isNotOwnersProfile: not('user.isOwner'),
@@ -66,6 +66,10 @@ export default Controller.extend({
 
     roles: computed(function () {
         return this.store.query('role', {permissions: 'assign'});
+    }),
+
+    parentUser: computed('user.parentId', function () {
+        return this.store.queryRecord('user', {id: this.get('user.parentId')});
     }),
 
     actions: {
@@ -304,30 +308,6 @@ export default Controller.extend({
         toggleUploadCoverModal() {
             this.toggleProperty('showUploadCoverModal');
         },
-
-        toggleUploadImageModal() {
-            this.toggleProperty('showUploadImageModal');
-        },
-
-        // TODO: remove those mutation actions once we have better
-        // inline validations that auto-clear errors on input
-        updatePassword(password) {
-            this.set('user.password', password);
-            this.get('user.hasValidated').removeObject('password');
-            this.get('user.errors').remove('password');
-        },
-
-        updateNewPassword(password) {
-            this.set('user.newPassword', password);
-            this.get('user.hasValidated').removeObject('newPassword');
-            this.get('user.errors').remove('newPassword');
-        },
-
-        updateNe2Password(password) {
-            this.set('user.ne2Password', password);
-            this.get('user.hasValidated').removeObject('ne2Password');
-            this.get('user.errors').remove('ne2Password');
-        }
     },
 
     _deleteUser() {

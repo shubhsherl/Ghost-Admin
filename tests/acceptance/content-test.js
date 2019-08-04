@@ -29,7 +29,7 @@ describe('Acceptance: Content', function () {
             publishedPost = this.server.create('post', {authors: [admin], status: 'published', title: 'Published Post'});
             scheduledPost = this.server.create('post', {authors: [admin], status: 'scheduled', title: 'Scheduled Post'});
             draftPost = this.server.create('post', {authors: [admin], status: 'draft', title: 'Draft Post'});
-            authorPost = this.server.create('post', {authors: [editor], status: 'published', title: 'Editor Published Post'});
+            authorPost = this.server.create('post', {authors: [editor, admin], status: 'published', title: 'Editor Published Post'});
 
             // pages shouldn't appear in the list
             this.server.create('page', {authors: [admin], status: 'published', title: 'Published Page'});
@@ -81,13 +81,9 @@ describe('Acceptance: Content', function () {
             [lastRequest] = this.server.pretender.handledRequests.slice(-1);
             expect(lastRequest.queryParams.filter, '"all" request status filter').to.have.string('status:[draft,scheduled,published]');
 
-            // show all posts by editor
-            await selectChoose('[data-test-author-select]', editor.name);
-
             // API request is correct
             [lastRequest] = this.server.pretender.handledRequests.slice(-1);
             expect(lastRequest.queryParams.filter, '"editor" request status filter').to.have.string('status:[draft,scheduled,published]');
-            expect(lastRequest.queryParams.filter, '"editor" request filter param').to.have.string(`authors:${editor.slug}`);
 
             // Displays editor post
             // TODO: implement "filter" param support and fix mirage post->author association

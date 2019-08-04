@@ -7,6 +7,7 @@ export default BaseValidator.create({
     properties: [
         'title',
         'authors',
+        'roomName',
         'customExcerpt',
         'canonicalUrl',
         'codeinjectionHead',
@@ -17,6 +18,8 @@ export default BaseValidator.create({
         'ogDescription',
         'twitterTitle',
         'twitterDescription',
+        'rcTitle',
+        'rcDescription',
         'publishedAtBlogTime',
         'publishedAtBlogDate'
     ],
@@ -117,6 +120,20 @@ export default BaseValidator.create({
     twitterDescription(model) {
         if (!validator.isLength(model.twitterDescription || '', 0, 500)) {
             model.errors.add('twitterDescription', 'Twitter Description cannot be longer than 500 characters.');
+            this.invalidate();
+        }
+    },
+
+    rcTitle(model) {
+        if (!validator.isLength(model.rcTitle || '', 0, 300)) {
+            model.errors.add('rcTitle', 'Message Title cannot be longer than 300 characters.');
+            this.invalidate();
+        }
+    },
+
+    rcDescription(model) {
+        if (!validator.isLength(model.rcDescription || '', 0, 500)) {
+            model.errors.add('rcDescription', 'Message Description cannot be longer than 500 characters.');
             this.invalidate();
         }
     },

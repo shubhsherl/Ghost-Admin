@@ -151,7 +151,27 @@
                 {{/link-to}}
             </div>
 
+            <div class="apps-grid-cell" data-test-app="search">
+                {{#link-to "settings.integrations.search" data-test-link="search"}}
+                <article class="apps-card-app">
+                    <div class="apps-card-left">
+                        <figure class="apps-card-app-icon" style="background-image:url(assets/img/magnifier.png);background-size:45px;"></figure>
+                        <div class="apps-card-meta">
+                            <h3 class="apps-card-app-title">Search</h3>
+                            <p class="apps-card-app-desc">This integration will help the Theme to Search Posts</p>
+                        </div>
+                    </div>
+                    <div class="gh-card-right">
+                        <div class="apps-configured">
+                            <span data-test-app-status>Configure</span>
+                            {{svg-jar "arrow-right"}}
+                        </div>
+                    </div>
+                </article>
+                {{/link-to}}
+            </div>
 
+            
         </div>
     </section>
 

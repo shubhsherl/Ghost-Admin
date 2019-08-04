@@ -10,16 +10,8 @@ const Router = EmberRouter.extend({
 Router.map(function () {
     this.route('home', {path: '/'});
 
-    this.route('setup', function () {
-        this.route('one');
-        this.route('two');
-        this.route('three');
-    });
-
     this.route('signin');
-    this.route('signout');
-    this.route('signup', {path: '/signup/:token'});
-    this.route('reset', {path: '/reset/:token'});
+    this.route('setup');
     this.route('about');
     this.route('site');
 
@@ -56,6 +48,7 @@ Router.map(function () {
     this.route('settings.integrations.amp', {path: '/settings/integrations/amp'});
     this.route('settings.integrations.unsplash', {path: '/settings/integrations/unsplash'});
     this.route('settings.integrations.zapier', {path: '/settings/integrations/zapier'});
+    this.route('settings.integrations.search', {path: '/settings/integrations/search'});
 
     this.route('members');
     this.route('member', {path: '/members/:member_id'});

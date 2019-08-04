@@ -9,9 +9,20 @@ export default AuthenticatedRoute.extend({
             return this.replaceWith('error404', {path, status: 404});
         }
 
-        return this.get('session.user').then(user => (
-            this.store.createRecord(modelName, {authors: [user]})
-        ));
+        return this.get('session.user').then((user) => {
+            let users = [user];
+            if (user.get('isContributor')) {
+                const pid = user.get('parentId');
+                return this.store.queryRecord('user', {id: pid})
+                    .then((parent) => {
+                        if (parent) {
+                            users.push(parent);
+                        }
+                        return this.store.createRecord(modelName, {authors: users});
+                    });
+            }
+            return this.store.createRecord(modelName, {authors: users});
+        });
     },
 
     // there's no specific controller for this route, instead all editor

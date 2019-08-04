@@ -31,18 +31,6 @@ export default function mockAuthentication(server) {
         }
     });
 
-    server.get('/authentication/invitation/', function (schema, request) {
-        let {email} = request.queryParams;
-        let invite = schema.invites.findBy({email});
-        let valid = !!invite;
-
-        return {
-            invitation: [{
-                valid
-            }]
-        };
-    });
-
     /* Setup ---------------------------------------------------------------- */
 
     server.post('/authentication/setup', function ({roles, users}, request) {

@@ -1,6 +1,6 @@
 <section class="gh-canvas">
     <header class="gh-canvas-header">
-        <h2 class="gh-canvas-title" data-test-screen-title>Your posts</h2>
+        <h2 class="gh-canvas-title" data-test-screen-title>Posts</h2>
         <section class="view-actions">
             {{#link-to "editor.new" "post" class="gh-btn gh-btn-green" data-test-new-post-button=true}}<span>New post</span>{{/link-to}}
         </section>
@@ -22,25 +22,6 @@
                 as |type|
             }}
                 {{type.name}}
-            {{/power-select}}
-            {{/unless}}
-
-            {{#unless session.user.isAuthorOrContributor}}
-            {{#power-select
-                selected=selectedAuthor
-                options=availableAuthors
-                searchField="name"
-                onchange=(action "changeAuthor")
-                tagName="div"
-                classNames="gh-contentfilter-menu gh-contentfilter-author"
-                triggerClass="gh-contentfilter-menu-trigger"
-                dropdownClass="gh-contentfilter-menu-dropdown"
-                searchPlaceholder="Search authors"
-                matchTriggerWidth=false
-                data-test-author-select=true
-                as |author|
-            }}
-                {{author.name}}
             {{/power-select}}
             {{/unless}}
 
@@ -91,6 +72,7 @@
             {{#each postsInfinityModel as |post|}}
                 {{gh-posts-list-item
                     post=post
+                    currentUserId=currentUserId
                     onDoubleClick=(action "openEditor")
                     data-test-post-id=post.id}}
             {{else}}

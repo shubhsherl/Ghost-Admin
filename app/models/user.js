@@ -12,6 +12,8 @@ export default Model.extend(ValidationEngine, {
     validationType: 'user',
 
     name: attr('string'),
+    rc_id: attr('string'),
+    rc_username: attr('string'),
     slug: attr('string'),
     email: attr('string'),
     profileImage: attr('string'),
@@ -26,7 +28,9 @@ export default Model.extend(ValidationEngine, {
     metaDescription: attr('string'),
     lastLoginUTC: attr('moment-utc'),
     createdAtUTC: attr('moment-utc'),
+    // CreatedBy will be updated from server
     createdBy: attr('number'),
+    parentId: attr('string', {defaultValue: '1'}),
     updatedAtUTC: attr('moment-utc'),
     updatedBy: attr('number'),
     roles: hasMany('role', {
