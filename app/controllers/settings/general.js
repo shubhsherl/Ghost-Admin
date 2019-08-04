@@ -197,7 +197,7 @@ export default Controller.extend({
             if (!newRoom) {
                 newRoom = oldRoom;
             }
-            this.rcServices.getRoom(newRoom)
+            this.rcServices.getRoom({rname: newRoom})
                 .then((room) => {
                     const existingRCRoom = room.data[0].exist && room.data[0].roomname === newRoom;
 

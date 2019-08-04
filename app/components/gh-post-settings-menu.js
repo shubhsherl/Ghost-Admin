@@ -226,15 +226,15 @@ export default Component.extend(SettingsMenuMixin, {
             if (!newRoom) {
                 newRoom = oldRoom;
             }
-            this.rcServices.getRoom(newRoom)
+            this.rcServices.getRoom({rname: newRoom})
                 .then((room) => {
-                    const {data: [{exist}]} = room;
+                    const {data: [{exist, rid}]} = room;
 
                     if (!exist) {
                         throw errMessage;
                     }
                     post.set('roomName', newRoom);
-                    post.set('roomId', room.data[0].rid);
+                    post.set('roomId', rid);
                 })
                 .catch((e) => {
                     if (e === errMessage){

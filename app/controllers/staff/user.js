@@ -308,10 +308,6 @@ export default Controller.extend({
         toggleUploadCoverModal() {
             this.toggleProperty('showUploadCoverModal');
         },
-
-        toggleUploadImageModal() {
-            this.toggleProperty('showUploadImageModal');
-        }
     },
 
     _deleteUser() {

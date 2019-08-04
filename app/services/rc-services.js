@@ -9,8 +9,7 @@ export default Service.extend({
         this._super(...arguments);
     },
 
-    getRoom(room) {
-        const query = {rname: room};
+    getRoom(query) {
         let url = this.get('ghostPaths.url').api('rcapi');
         return this.ajax.request(url, {data: query});
     },
